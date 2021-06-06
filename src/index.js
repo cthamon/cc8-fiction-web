@@ -1,14 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 import AuthContextProvider from './contexts/AuthContextProvider';
+import { ChakraProvider } from "@chakra-ui/react";
+
+import App from './App';
+import customTheme from "./utils/theme";
 
 ReactDOM.render(
   <React.StrictMode>
     <AuthContextProvider>
-      <App />
+      <ChakraProvider theme={customTheme}>
+        <App />
+      </ChakraProvider>
     </AuthContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
