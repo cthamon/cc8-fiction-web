@@ -19,10 +19,10 @@ function Navbar() {
                 <Text
                     align='left'
                     fontSize='m'
-                    color='gray.600'
+                    color='secondary.600'
                     bg='white'
                     cursor='pointer'
-                    _hover={{ color: 'green.500' }}
+                    _hover={{ color: 'primary.500' }}
                 >
                     {children}
                 </Text>
@@ -46,7 +46,7 @@ function Navbar() {
             w='100%'
             p='1% 3%'
             borderBottom='1px'
-            borderColor='gray.200'
+            borderColor='secondary.200'
         >
             <Flex
                 align='center'
@@ -55,8 +55,9 @@ function Navbar() {
                 <Logo
                     fontSize='3xl'
                     fontWeight='bold'
-                    color='green.500'
+                    color='primary.500'
                     mr={8}
+                    onClick={() => { history.push('/'); history.go(0); }}
                 />
                 <Popover
                     trigger={'hover'}
@@ -69,12 +70,12 @@ function Navbar() {
                             m='0 auto'
                             justify='center'
                             align='center'
-                            _hover={{ bg: 'gray.300' }}
+                            _hover={{ bg: 'secondary.300' }}
                         >
                             <Text
                                 display='block'
                                 fontWeight='semibold'
-                                color='gray.600'
+                                color='secondary.600'
                                 cursor='pointer'
                             >
                                 Types <TriangleDownIcon />
@@ -90,11 +91,11 @@ function Navbar() {
                                         key={i}
                                         size='sm'
                                         rounded='md'
-                                        color='gray.600'
+                                        color='secondary.600'
                                         bg='white'
                                         mr={2}
                                         // onClick={}
-                                        _hover={{ color: 'green.500' }}
+                                        _hover={{ color: 'primary.500' }}
                                     >
                                         {item}
                                     </Button>
@@ -110,12 +111,12 @@ function Navbar() {
                     justify='center'
                     align='center'
                     onClick={() => history.push('/search')}
-                    _hover={{ bg: 'gray.300' }}
+                    _hover={{ bg: 'secondary.300' }}
                 >
                     <Text
                         display='block'
                         fontWeight='semibold'
-                        color='gray.600'
+                        color='secondary.600'
                         cursor='pointer'
                     >
                         Search
@@ -141,10 +142,10 @@ function Navbar() {
                                 h='100%'
                                 justify='center'
                                 align='center'
-                                _hover={{ bg: 'gray.300' }}>
+                                _hover={{ bg: 'secondary.300' }}>
                                 <Image
-                                    borderRadius="full"
-                                    boxSize="32px"
+                                    borderRadius='full'
+                                    boxSize='32px'
                                     src={user.profileImg}
                                     alt="Profile Picture"
                                 />
@@ -153,12 +154,12 @@ function Navbar() {
                         <PopoverContent w='250px'>
                             <PopoverArrow />
                             <PopoverHeader pt={4} pb={4}>
-                                <Text color='green.500' fontSize='xl' fontWeight='bold'>{user.username}</Text>
-                                <Text color='gray.600' fontSize='sm'>{user.email}</Text>
+                                <Text color='primary.500' fontSize='xl' fontWeight='bold'>{user.username}</Text>
+                                <Text color='secondary.600' fontSize='sm'>{user.email}</Text>
                             </PopoverHeader>
                             <PopoverBody>
-                                <MenuButton>My Novel</MenuButton>
-                                <MenuButton>Shelf</MenuButton>
+                                <MenuButton onClick={() => history.push('/m')}>My Novel</MenuButton>
+                                <MenuButton>Following Novel</MenuButton>
                                 <MenuButton>Read History</MenuButton>
                                 <MenuButton>Order History</MenuButton>
                                 <MenuButton>Edit Profile</MenuButton>
@@ -171,11 +172,11 @@ function Navbar() {
                 {!token && <Button
                     size='sm'
                     rounded='md'
-                    color='green.500'
+                    color='primary.500'
                     bg='white'
                     mr={2}
                     onClick={() => history.push('/login')}
-                    _hover={{ bg: 'gray.300' }}
+                    _hover={{ bg: 'secondary.300' }}
                 >
                     Sign in
                 </Button>}
@@ -183,8 +184,9 @@ function Navbar() {
                     size='sm'
                     rounded='md'
                     color='white'
-                    bg='green.500'
-                    _hover={{ bg: 'green.600' }}
+                    bg='primary.500'
+                    onClick={() => history.push('/register')}
+                    _hover={{ bg: 'primary.600' }}
                 >
                     Sign up
                 </Button>}

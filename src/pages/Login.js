@@ -1,4 +1,4 @@
-import { Box, Flex, Link, Stack, Text, Select, FormControl, FormHelperText, InputGroup, Input, InputRightElement, Button } from '@chakra-ui/react';
+import { Box, Flex, Link, Stack, Text, Select, FormControl, FormLabel, FormHelperText, InputGroup, Input, InputRightElement, Button } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
@@ -60,8 +60,9 @@ function Login() {
                     <form onSubmit={handleSubmit}>
                         <Stack>
                             <Select
-                                size='xs'
-                                w='25%'
+                                size='none'
+                                fontWeight='semibold'
+                                w='30%'
                                 onChange={() => setShow(!show)}
                             >
                                 <option>Email</option>
@@ -70,7 +71,6 @@ function Login() {
                             {show && <Box>
                                 <FormControl>
                                     <Input
-                                        pr='4.5rem'
                                         type='text'
                                         placeholder='Email'
                                         value={email}
@@ -89,7 +89,6 @@ function Login() {
                             {!show && <Box>
                                 <FormControl>
                                     <Input
-                                        pr='4.5rem'
                                         type='text'
                                         placeholder='Username'
                                         value={username}
@@ -99,9 +98,10 @@ function Login() {
                             </Box>}
                             <Box>
                                 <FormControl>
+                                    <FormLabel>Password</FormLabel>
                                     <InputGroup size='md'>
                                         <Input
-                                            pr='4.5rem'
+                                            pr='1rem'
                                             type={showPassword ? 'text' : 'password'}
                                             placeholder='Password'
                                             value={password}
@@ -134,9 +134,9 @@ function Login() {
                             <Button
                                 rounded='md'
                                 color='white'
-                                bg='green.500'
+                                bg='primary.500'
                                 type='submit'
-                                _hover={{ bg: 'green.600' }}
+                                _hover={{ bg: 'primary.600' }}
                             >
                                 Log in
                             </Button>

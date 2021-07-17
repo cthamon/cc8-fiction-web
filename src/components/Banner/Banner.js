@@ -1,7 +1,7 @@
 import { Box, Flex, Image, RadioGroup, Radio } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { useState } from 'react';
-import './Banner.css'
+import { useState, useEffect } from 'react';
+import './animation.css';
 
 function Banner() {
     const bannerImages = [
@@ -12,25 +12,54 @@ function Banner() {
         'https://s3.ap-southeast-1.amazonaws.com/media.fictionlog/ebooks/609e3e77c58864001b9e93d0/adpc15p7hh3q9h1a.jpeg'
     ];
 
+    const [moveleft, setMoveLeft] = useState(0);
+    const [moveright, setMoveRight] = useState(0);
+    const [quickmoveleft, setQuickMoveLeft] = useState(0);
+    const [quickmoveright, setQuickMoveRight] = useState(0);
     const [radioNumber, setRadioNumber] = useState(0);
 
     const imageNumber = (radioNumber, number, maxNumber) => {
         if (+radioNumber + +number >= +maxNumber) {
-            return +radioNumber + +number - +maxNumber
-        } return +radioNumber + +number
-    }
+            return +radioNumber + +number - +maxNumber;
+        } return +radioNumber + +number;
+    };
 
     const ChevronLeftChecker = (radioNumber, maxNumber) => {
         if (+radioNumber - 1 < 0) {
-            return setRadioNumber(maxNumber - 1)
-        } return setRadioNumber(+radioNumber - 1)
-    }
+            return setTimeout(() => setRadioNumber(maxNumber - 1), 400);
+        } return setTimeout(() => setRadioNumber(+radioNumber - 1), 400);
+    };
 
     const ChevronRightChecker = (radioNumber, maxNumber) => {
         if (+radioNumber + 1 >= +maxNumber) {
-            return setRadioNumber(0)
-        } return setRadioNumber(+radioNumber + 1)
-    }
+            return setTimeout(() => setRadioNumber(0), 400);
+        } return setTimeout(() => setRadioNumber(+radioNumber + 1), 400);
+    };
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (+radioNumber + 1 >= +bannerImages.length) {
+                setTimeout(() => setRadioNumber(0), 400);
+                setMoveLeft(1);
+            } else {
+                setTimeout(() => setRadioNumber(radioNumber + 1), 400);
+                setMoveLeft(1);
+            }
+        }, 1500);
+        return () => clearInterval(interval);
+    }, [radioNumber]);
+
+    const radioAnimation = (prev, next) => {
+        if (next - prev === 1) {
+            return setMoveLeft(1), setTimeout(() => setRadioNumber(next), 400);
+        } else if (prev - next === 1) {
+            return setMoveRight(1), setTimeout(() => setRadioNumber(next), 400);
+        } else if (next - prev > 1) {
+            return setQuickMoveLeft(1), setTimeout(() => setRadioNumber(next), 75);
+        } else if (prev - next > 1) {
+            return setQuickMoveRight(1), setTimeout(() => setRadioNumber(next), 75);
+        }
+    };
 
     return (
         <Box>
@@ -42,6 +71,7 @@ function Banner() {
                 overflow='hidden'
             >
                 <Flex
+                    display={['none', 'none', 'flex', 'flex']}
                     w='40px'
                     h='40px'
                     justify='center'
@@ -51,17 +81,26 @@ function Banner() {
                     rounded='full'
                     bg='rgba(255,255,255,0.8)'
                     cursor='pointer'
-                    onClick={() => ChevronLeftChecker(radioNumber, bannerImages.length)}
+                    onClick={() => { ChevronLeftChecker(radioNumber, bannerImages.length); setMoveRight(1); }}
                     zIndex='1'
+                    _hover={{ bg: 'rgba(225,225,225,0.8)' }}
                 >
                     <ChevronLeftIcon />
                 </Flex>
                 <Box
                     className='banner'
+                    moveleft={moveleft}
+                    moveright={moveright}
+                    quickmoveleft={quickmoveleft}
+                    quickmoveright={quickmoveright}
                     display={['none', 'none', 'block', 'block']}
                     minW='682px'
-                    bg='gray.600'
+                    h='311.891'
+                    bg='secondary.600'
+                    mr='20px'
                     userSelect='none'
+                    position='relative'
+                    onAnimationEnd={() => { setMoveLeft(0); setMoveRight(0); setQuickMoveLeft(0); setQuickMoveRight(0); }}
                 >
                     <Image
                         rouded='xl'
@@ -70,30 +109,83 @@ function Banner() {
                 </Box>
                 <Box
                     className='banner'
+                    moveleft={moveleft}
+                    moveright={moveright}
+                    quickmoveleft={quickmoveleft}
+                    quickmoveright={quickmoveright}
                     display={['none', 'none', 'block', 'block']}
-                    minW={['90%', '90%', '682px', '682px']}
-                    bg='gray.600'
-                    m='0 20px'
+                    minW='682px'
+                    h='311.891'
+                    bg='secondary.600'
                     userSelect='none'
+                    position='relative'
+                    onAnimationEnd={() => { setMoveLeft(0); setMoveRight(0); setQuickMoveLeft(0); setQuickMoveRight(0); }}
                 >
                     <Image
-                        rouded='xl'
+                        rounded='xl'
                         src={bannerImages[imageNumber(radioNumber, 1, bannerImages.length)]}
                     />
                 </Box>
                 <Box
                     className='banner'
+                    moveleft={moveleft}
+                    moveright={moveright}
+                    quickmoveleft={quickmoveleft}
+                    quickmoveright={quickmoveright}
                     display={['none', 'none', 'block', 'block']}
                     minW='682px'
-                    bg='gray.600'
+                    h='311.891'
+                    m='0 20px'
                     userSelect='none'
+                    position='relative'
+                    onAnimationEnd={() => { setMoveLeft(0); setMoveRight(0); setQuickMoveLeft(0); setQuickMoveRight(0); }}
                 >
                     <Image
-                        rouded='xl'
+                        rounded='xl'
                         src={bannerImages[imageNumber(radioNumber, 2, bannerImages.length)]}
                     />
                 </Box>
+                <Box
+                    className='banner'
+                    moveleft={moveleft}
+                    moveright={moveright}
+                    quickmoveleft={quickmoveleft}
+                    quickmoveright={quickmoveright}
+                    display={['none', 'none', 'block', 'block']}
+                    minW='682px'
+                    h='311.891'
+                    bg='secondary.600'
+                    userSelect='none'
+                    position='relative'
+                    onAnimationEnd={() => { setMoveLeft(0); setMoveRight(0); setQuickMoveLeft(0); setQuickMoveRight(0); }}
+                >
+                    <Image
+                        rounded='xl'
+                        src={bannerImages[imageNumber(radioNumber, 3, bannerImages.length)]}
+                    />
+                </Box>
+                <Box
+                    className='banner'
+                    moveleft={moveleft}
+                    moveright={moveright}
+                    quickmoveleft={quickmoveleft}
+                    quickmoveright={quickmoveright}
+                    display={['none', 'none', 'block', 'block']}
+                    minW='682px'
+                    h='311.891'
+                    bg='secondary.600'
+                    ml='20px'
+                    userSelect='none'
+                    position='relative'
+                    onAnimationEnd={() => { setMoveLeft(0); setMoveRight(0); setQuickMoveLeft(0); setQuickMoveRight(0); }}
+                >
+                    <Image
+                        rounded='xl'
+                        src={bannerImages[imageNumber(radioNumber, 4, bannerImages.length)]}
+                    />
+                </Box>
                 <Flex
+                    display={['none', 'none', 'flex', 'flex']}
                     w='40px'
                     h='40px'
                     justify='center'
@@ -103,13 +195,15 @@ function Banner() {
                     rounded='full'
                     bg='rgba(255,255,255,0.8)'
                     cursor='pointer'
-                    onClick={() => { ChevronRightChecker(radioNumber, bannerImages.length); }}
+                    onClick={() => { ChevronRightChecker(radioNumber, bannerImages.length); setMoveLeft(1); }}
                     zIndex='1'
+                    _hover={{ bg: 'rgba(225,225,225,0.8)' }}
                 >
                     <ChevronRightIcon />
                 </Flex>
             </Flex>
             <RadioGroup
+                display={['none', 'none', 'block', 'block']}
                 align='center'
                 value={radioNumber}
             >
@@ -118,15 +212,19 @@ function Banner() {
                         <Radio
                             key={i}
                             value={i}
+                            size='sm'
                             m='10px 5px 0 0'
-                            onClick={() => setRadioNumber(i)}
+                            cursor='pointer'
+                            colorScheme='green'
+                            onClick={() => radioAnimation(radioNumber, i)}
+                            _focus={{ shadow: 'none' }}
                         >
                         </Radio>
-                    )
+                    );
                 })}
             </RadioGroup>
         </Box >
     );
-}
+};
 
 export default Banner;

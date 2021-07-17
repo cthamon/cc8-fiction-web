@@ -1,9 +1,0 @@
-@keyframes moveleft {
-    0% {right: 0px;}
-    100% {right: 692px}
-}
-
-.banner {
-    animation: moveleft 0.5s linear;
-    position: relative;
-}
