@@ -1,17 +1,17 @@
 import Navbar from '../components/Navbar';
 import { Box, Flex, Stack, Text, Button, Divider, Spacer, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from '@chakra-ui/react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import axios from "axios";
 import localStorageService from '../services/localStorageService';
+import { ActivityContext } from '../contexts/ActivityContextProvider';
 
 function Episode() {
     const token = localStorageService.getToken();
     const history = useHistory();
-    const location = useLocation();
-    const { id } = location;
+    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
 
-    if (!id) {
+    if (!novelId) {
         history.push('/m');
     }
 
@@ -23,12 +23,12 @@ function Episode() {
     const cancelRef = useRef();
 
     const fetchAllNovel = async () => {
-        const res = await axios.get(`http://localhost:8000/novel/${id}`);
+        const res = await axios.get(`http://localhost:8000/novel/${novelId}`);
         setNovel(res.data.novel);
     };
 
     const fetchEpisode = async () => {
-        const res = await axios.get(`http://localhost:8000/novel/${id}/episode`);
+        const res = await axios.get(`http://localhost:8000/novel/${novelId}/episode`);
         setEpisode(res.data.episodes);
     };
 
@@ -91,7 +91,7 @@ function Episode() {
                                         mr='5px'
                                         color='white'
                                         bg='yellow.500'
-                                        onClick={() => history.push({ pathname: '/editep', id: item.id })}
+                                        onClick={() => { history.push('/editn'); setNovelId(item.id); }}
                                         _hover={{ bg: 'yellow.600' }}
                                     >
                                         Edit
@@ -114,7 +114,7 @@ function Episode() {
                             w='11.7%'
                             color='white'
                             bg='primary.500'
-                            onClick={() => history.push({ pathname: '/ep', id })}
+                            onClick={() => history.push('/ep')}
                             _hover={{ bg: 'primary.600' }}
                         >
                             + New Episode
@@ -123,7 +123,7 @@ function Episode() {
                             {episode.map((item, i) => {
                                 return (
                                     <Flex key={i} mb='20px' justify='space-between' align='center'>
-                                        <Box cursor='pointer'>
+                                        <Box cursor='pointer' onClick={() => { history.push('/editep'); setEpisodeId(item.id); }}>
                                             <Text fontWeight='semibold' color='secondary.700'>Episode {item.episodeNumber} : {item.episodeTitle}</Text>
                                             <Text mr='5px' color='secondary.500'>{item.updatedAt.split('T')[0]}</Text>
                                         </Box>
@@ -133,7 +133,7 @@ function Episode() {
                                                 mr='5px'
                                                 color='white'
                                                 bg='yellow.500'
-                                                onClick={() => history.push({ pathname: '/editep', id, episodeId: item.id })}
+                                                onClick={() => { history.push('/editep'); setEpisodeId(item.id); }}
                                                 _hover={{ bg: 'yellow.600' }}
                                             >
                                                 Edit

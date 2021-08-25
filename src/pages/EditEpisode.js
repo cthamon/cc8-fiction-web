@@ -1,15 +1,15 @@
 import Navbar from '../components/Navbar';
 import { Box, Flex, Text, Textarea, Input, Button } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import axios from "axios";
 import localStorageService from '../services/localStorageService';
+import { ActivityContext } from '../contexts/ActivityContextProvider';
 
 function CreateEpisode() {
     const token = localStorageService.getToken();
     const history = useHistory();
-    const location = useLocation();
-    const { id, episodeId } = location;
+    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
 
     const [error, setError] = useState([]);
 
@@ -35,12 +35,11 @@ function CreateEpisode() {
     }, []);
 
     let paragraph = content.split(/\r?\n/);
-    console.log(paragraph);
 
     const handleSubmit = (e) => {
         axios.patch(`http://localhost:8000/novel/editcontent/${episodeId}`, { episodeNumber, episodeTitle, price, paragraph }, { headers: { 'Authorization': `Bearer ${token}` } })
             .then(res => {
-                history.push({ pathname: '/ninfo', id });
+                history.push('/ninfo');
             })
             .catch(err => {
                 if (err.response) {
@@ -122,7 +121,7 @@ function CreateEpisode() {
                         color='white'
                         bg='red.600'
                         _hover={{ bg: 'red.700' }}
-                        onClick={() => history.push({ pathname: '/ninfo', id })}
+                        onClick={() => history.push('/ninfo')}
                     >
                         Back
                     </Button>

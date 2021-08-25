@@ -9,14 +9,15 @@ import EditNovel from "./pages/EditNovel";
 import Episode from "./pages/Episode";
 import CreateEpisode from "./pages/CreateEpisode";
 import EditEpisode from "./pages/EditEpisode";
+import Read from "./pages/Read";
+import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
+import Follow from "./pages/Follow";
+import History from "./pages/History";
 
-import HomeTest from "./pages/HomeTest";
-import ReadNovel from "./pages/ReadNovel";
 import Order from "./pages/Order";
 import ViewOrder from "./pages/ViewOrder";
 import ViewOrderItem from "./pages/ViewOrderItem";
-import Follow from "./pages/Follow";
-import ReadHistory from "./pages/ReadHistory";
 
 function App() {
   return (
@@ -30,14 +31,16 @@ function App() {
         <Route exact path="/ninfo" component={Episode} />
         <Route exact path="/ep" component={CreateEpisode} />
         <Route exact path="/editep" component={EditEpisode} />
+        <Route exact path="/read" component={Read} />
+        <Route exact path="/follow" component={Follow} />
+        <Route exact path="/profile" component={Profile} />
+        <Route exact path="/editprofile" component={EditProfile} />
+        <Route exact path="/history" component={History} />
 
-        <Route exact path="/hometest" component={HomeTest} />
-        <Route exact path="/read" component={ReadNovel} />
         <Route exact path="/order" component={Order} />
         <Route exact path="/vieworder" component={ViewOrder} />
         <Route exact path="/vieworderitem" component={ViewOrderItem} />
-        <Route exact path="/follow" component={Follow} />
-        <Route exact path="/readhistory" component={ReadHistory} />
+
         <Route exact path="/" component={Home} />
       </Switch>
     </BrowserRouter>

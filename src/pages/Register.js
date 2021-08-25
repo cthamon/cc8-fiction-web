@@ -219,7 +219,6 @@ function Register() {
                                     />
                                     <FormErrorMessage>{error.phoneNumber}</FormErrorMessage>
                                 </FormControl>
-
                                 <Box>
                                     <FormControl>
                                         <FormLabel>Profile Picture</FormLabel>

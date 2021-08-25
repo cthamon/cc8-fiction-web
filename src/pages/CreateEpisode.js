@@ -1,27 +1,27 @@
 import Navbar from '../components/Navbar';
 import { Box, Flex, Text, Textarea, Input, Button } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import axios from "axios";
 import localStorageService from '../services/localStorageService';
+import { ActivityContext } from '../contexts/ActivityContextProvider';
 
 function CreateEpisode() {
     const token = localStorageService.getToken();
     const history = useHistory();
-    const location = useLocation();
-    const { id } = location;
+    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
 
     const [episode, setEpisode] = useState([]);
     const [error, setError] = useState([]);
 
     const [episodeTitle, setEpisodeTitle] = useState([]);
-    const [price, setPrice] = useState([]);
+    const [price, setPrice] = useState(0);
     const [content, setContent] = useState('');
     const episodeNumber = episode.length + 1;
 
     useEffect(() => {
         const fetchEpisode = async () => {
-            const res = await axios.get(`http://localhost:8000/novel/${id}/episode`);
+            const res = await axios.get(`http://localhost:8000/novel/${novelId}/episode`);
             setEpisode(res.data.episodes);
         };
         fetchEpisode();
@@ -30,9 +30,9 @@ function CreateEpisode() {
     let paragraph = content.split(/\r?\n/);
 
     const handleSubmit = (e) => {
-        axios.post(`http://localhost:8000/novel/createcontent/${id}`, { episodeNumber, episodeTitle, price, paragraph }, { headers: { 'Authorization': `Bearer ${token}` } })
+        axios.post(`http://localhost:8000/novel/createcontent/${novelId}`, { episodeNumber, episodeTitle, price, paragraph }, { headers: { 'Authorization': `Bearer ${token}` } })
             .then(res => {
-                history.push({ pathname: '/ninfo', id });
+                history.push('/ninfo');
             })
             .catch(err => {
                 if (err.response) {
@@ -114,7 +114,7 @@ function CreateEpisode() {
                         color='white'
                         bg='red.600'
                         _hover={{ bg: 'red.700' }}
-                        onClick={() => history.push({ pathname: '/ninfo', id })}
+                        onClick={() => history.push('/ninfo')}
                     >
                         Back
                     </Button>

@@ -1,15 +1,15 @@
 import Navbar from '../components/Navbar';
 import { Box, Flex, Stack, Text, Textarea, FormControl, FormLabel, Input, Button } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import axios from "axios";
 import localStorageService from '../services/localStorageService';
+import { ActivityContext } from '../contexts/ActivityContextProvider';
 
 function EditNovel() {
     const token = localStorageService.getToken();
     const history = useHistory();
-    const location = useLocation();
-    const { id } = location;
+    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
 
     const [input, setInput] = useState({
         title: '',
@@ -26,7 +26,7 @@ function EditNovel() {
 
     useEffect(() => {
         const fetchAllNovel = async () => {
-            const res = await axios.get(`http://localhost:8000/novel/${id}`);
+            const res = await axios.get(`http://localhost:8000/novel/${novelId}`);
             setInput(prev => ({
                 ...prev,
                 title: res.data.novel[0].title,
@@ -60,8 +60,8 @@ function EditNovel() {
         formData.append('novelType', novelType);
         formData.append('price', price);
         formData.append('image', file);
-        axios.patch(`http://localhost:8000/novel/edit/${id}`, formData, { headers: { 'Authorization': `Bearer ${token}` } })
-            .then(() => { history.push('/m'); history.go(0); })
+        axios.patch(`http://localhost:8000/novel/edit/${novelId}`, formData, { headers: { 'Authorization': `Bearer ${token}` } })
+            .then(() => { history.push('/ninfo'); })
             .catch(err => {
                 if (err.response) {
                     setError({ server: err.response.data.message });
@@ -203,7 +203,7 @@ function EditNovel() {
                         color='white'
                         bg='red.600'
                         w='126px'
-                        onClick={() => { history.push({ pathname: '/ninfo', id }); }}
+                        onClick={() => history.push('/ninfo')}
                         _hover={{ bg: 'red.700' }}
                     >
                         Back

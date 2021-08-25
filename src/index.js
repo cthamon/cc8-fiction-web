@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import AuthContextProvider from './contexts/AuthContextProvider';
+import ActivityContextProvider from './contexts/ActivityContextProvider';
 import { ChakraProvider } from "@chakra-ui/react";
 
 import App from './App';
@@ -11,9 +12,11 @@ import customTheme from "./utils/theme";
 ReactDOM.render(
   <React.StrictMode>
     <AuthContextProvider>
-      <ChakraProvider theme={customTheme}>
-        <App />
-      </ChakraProvider>
+      <ActivityContextProvider>
+        <ChakraProvider theme={customTheme}>
+          <App />
+        </ChakraProvider>
+      </ActivityContextProvider>
     </AuthContextProvider>
   </React.StrictMode>,
   document.getElementById('root')

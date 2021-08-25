@@ -1,16 +1,17 @@
 import { Flex, Text, Button, Image, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverFooter, PopoverArrow } from '@chakra-ui/react';
 import { TriangleDownIcon } from '@chakra-ui/icons';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
 import axios from "axios";
 import localStorageService from '../services/localStorageService';
 import Logo from './Logo';
+import { AuthContext } from '../contexts/AuthContextProvider';
 
 function Navbar() {
     const token = localStorageService.getToken();
     const history = useHistory();
 
-    const [user, setUser] = useState([]);
+    const { user, setUser } = useContext(AuthContext);
     const novelTypes = ['Action', 'Adventure', 'Crime', 'Comedy', 'Drama', 'Horror', 'Romantic', 'Science Fiction', 'Sport'];
 
     const MenuButton = ({ children, ...rest }) => {
@@ -47,6 +48,7 @@ function Navbar() {
             p='1% 3%'
             borderBottom='1px'
             borderColor='secondary.200'
+            bg='#fff'
         >
             <Flex
                 align='center'
@@ -57,7 +59,7 @@ function Navbar() {
                     fontWeight='bold'
                     color='primary.500'
                     mr={8}
-                    onClick={() => { history.push('/'); history.go(0); }}
+                    onClick={() => { history.push('/'); }}
                 />
                 <Popover
                     trigger={'hover'}
@@ -153,16 +155,16 @@ function Navbar() {
                         </PopoverTrigger>
                         <PopoverContent w='250px'>
                             <PopoverArrow />
-                            <PopoverHeader pt={4} pb={4}>
-                                <Text color='primary.500' fontSize='xl' fontWeight='bold'>{user.username}</Text>
+                            <PopoverHeader pt={4} pb={4} onClick={() => history.push('/editprofile')} cursor='pointer'>
+                                <Text color='primary.500' fontSize='xl' fontWeight='bold'> {user.username}</Text>
                                 <Text color='secondary.600' fontSize='sm'>{user.email}</Text>
                             </PopoverHeader>
                             <PopoverBody>
                                 <MenuButton onClick={() => history.push('/m')}>My Novel</MenuButton>
-                                <MenuButton>Following Novel</MenuButton>
-                                <MenuButton>Read History</MenuButton>
+                                <MenuButton onClick={() => history.push('/follow')}> Following</MenuButton>
+                                <MenuButton onClick={() => history.push('/history')}>Read History</MenuButton>
                                 <MenuButton>Order History</MenuButton>
-                                <MenuButton>Edit Profile</MenuButton>
+                                <MenuButton onClick={() => history.push('/editprofile')}>Edit Profile</MenuButton>
                             </PopoverBody>
                             <PopoverFooter>
                                 <MenuButton onClick={() => { localStorageService.clearToken(); history.go(0); }}>Sign out</MenuButton>

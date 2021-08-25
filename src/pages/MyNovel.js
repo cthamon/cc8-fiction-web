@@ -1,16 +1,19 @@
 import Navbar from '../components/Navbar';
 import { Flex, Box, Text, Button, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, Divider, Stack } from '@chakra-ui/react';
-import { TriangleDownIcon } from '@chakra-ui/icons';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { useHistory } from 'react-router';
 import axios from "axios";
 import localStorageService from '../services/localStorageService';
+import { ActivityContext } from '../contexts/ActivityContextProvider';
 
 function MyNovel() {
     const token = localStorageService.getToken();
     const history = useHistory();
+    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
 
     const [novel, setNovel] = useState([]);
+    const [rating, setRating] = useState([]);
+    const [read, setRead] = useState([]);
 
     const [isOpen, setIsOpen] = useState(false);
     const [deleteObject, setDeleteObject] = useState([]);
@@ -21,8 +24,30 @@ function MyNovel() {
         setNovel(res.data.novels);
     };
 
+    const fetchRating = async () => {
+        const res = await axios.get('http://localhost:8000/novel/userrating', { headers: { 'Authorization': `Bearer ${token}` } });
+        const operation = res.data.novelRating.map(item => Math.round(item.reduce((acc, cv) => cv.score + acc, 0) / item.length * 100) / 100);
+        setRating(operation);
+    };
+
+    const readCount = async () => {
+        const res = await axios.get('http://localhost:8000/novel/user', { headers: { 'Authorization': `Bearer ${token}` } });
+        const readInfo = await axios.get(`http://localhost:8000/user/allread`);
+        const counter = res.data.novels.map(item => {
+            let sum = 0;
+            for (let ele of readInfo.data.novelList) {
+                if (ele.novelId === item.id) {
+                    sum += 1;
+                }
+            } return sum;
+        });
+        setRead(counter);
+    };
+
     useEffect(() => {
         fetchNovel();
+        fetchRating();
+        readCount();
     }, []);
 
     return (
@@ -65,12 +90,6 @@ function MyNovel() {
                 >
                     {novel.length >= 2 ? 'My Novels' : 'My Novel'}
                 </Text>
-                <Text
-                    fontWeight='semibold'
-                    color='secondary.600'
-                >
-                    {/* Sort by <TriangleDownIcon /> */}
-                </Text>
             </Flex>
             {novel.map((item, i) => {
                 return (
@@ -96,23 +115,19 @@ function MyNovel() {
                                     h='112.5px'
                                     mr='30px'
                                     cursor='pointer'
-                                    onClick={() => history.push({ pathname: '/ninfo', id: item.id })}
+                                    onClick={() => { history.push('/ninfo'); setNovelId(item.id); }}
                                 >
                                 </Box>
                                 <Stack cursor='pointer'>
-                                    <Text fontWeight='semibold' onClick={() => history.push({ pathname: '/ninfo', id: item.id })}>{item.title}</Text>
+                                    <Text fontWeight='semibold' onClick={() => { history.push('/ninfo'); setNovelId(item.id); }}>{item.title}</Text>
                                     <Flex>
                                         <Box>
-                                            <Text fontWeight='semibold' mr='20px'>Rating</Text>
-                                            <Text>0</Text>
+                                            <Text fontWeight='semibold' mr='35px'>Rating</Text>
+                                            <Text>{isNaN(rating[i]) ? 'No Rating' : rating[i]}</Text>
                                         </Box>
                                         <Box>
                                             <Text fontWeight='semibold' mr='20px'>Read</Text>
-                                            <Text>0</Text>
-                                        </Box>
-                                        <Box>
-                                            <Text fontWeight='semibold'>Comment</Text>
-                                            <Text>0</Text>
+                                            <Text>{read[i]}</Text>
                                         </Box>
                                     </Flex>
                                 </Stack>
@@ -123,7 +138,7 @@ function MyNovel() {
                                     size='sm'
                                     color='white'
                                     bg='primary.500'
-                                    onClick={() => history.push({ pathname: '/ninfo', id: item.id })}
+                                    onClick={() => { history.push('/ninfo'); setNovelId(item.id); }}
                                     _hover={{ bg: 'primary.600' }}
                                 >
                                     Detail
@@ -133,7 +148,7 @@ function MyNovel() {
                                     size='sm'
                                     color='white'
                                     bg='yellow.500'
-                                    onClick={() => history.push({ pathname: '/editn', id: item.id })}
+                                    onClick={() => { history.push('/editn'); setNovelId(item.id); }}
                                     _hover={{ bg: 'yellow.600' }}
                                 >
                                     Edit
