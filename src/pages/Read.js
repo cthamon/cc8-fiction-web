@@ -1,5 +1,5 @@
 import Navbar from '../components/Navbar';
-import { Flex, Box, Text, Image, Button, Divider, Input, Textarea } from '@chakra-ui/react';
+import { Flex, Box, Text, Image, Button, Divider, Textarea } from '@chakra-ui/react';
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
@@ -11,8 +11,8 @@ import { AuthContext } from '../contexts/AuthContextProvider';
 function Read() {
     const token = localStorageService.getToken();
     const history = useHistory();
-    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
-    const { user, setUser } = useContext(AuthContext);
+    const { novelId, episodeId, setEpisodeId } = useContext(ActivityContext);
+    const { user } = useContext(AuthContext);
 
     if (!episodeId) {
         history.push('/');

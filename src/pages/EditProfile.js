@@ -1,8 +1,8 @@
 import Navbar from '../components/Navbar';
-import { Box, Flex, Stack, Text, Textarea, FormControl, FormLabel, Input, Button, Image, AlertDialog, AlertDialogContent, AlertDialogBody } from '@chakra-ui/react';
+import { Box, Flex, Text, Textarea, FormControl, FormLabel, Input, Button, Image, AlertDialog, AlertDialogContent, AlertDialogBody } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
-import { useState, useEffect, useContext, useRef } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useState, useEffect, useRef } from 'react';
+import { useHistory } from 'react-router';
 import axios from 'axios';
 import localStorageService from '../services/localStorageService';
 

@@ -1,5 +1,5 @@
 import Navbar from '../components/Navbar';
-import { Flex, Box, Text, Image, Button, Divider, Textarea, Select } from '@chakra-ui/react';
+import { Flex, Box, Text, Image, Button, Divider } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
@@ -10,8 +10,8 @@ import { AuthContext } from '../contexts/AuthContextProvider';
 
 function Follow() {
     const history = useHistory();
-    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
-    const { user, setUser } = useContext(AuthContext);
+    const { setNovelId, setEpisodeId } = useContext(ActivityContext);
+    const { user } = useContext(AuthContext);
 
     const [followlist, setFollowlist] = useState([]);
     const [novellist, setNovellist] = useState([]);
@@ -19,7 +19,6 @@ function Follow() {
     const [toggleNovel, setToggleNovel] = useState(false);
     const [novel, setNovel] = useState([]);
     const [novelContent, setNovelContent] = useState([]);
-    const [followInfo, setFollowInfo] = useState([]);
 
     const token = localStorageService.getToken();
 
@@ -33,21 +32,6 @@ function Follow() {
         setNovellist(res.data.novelLists);
     };
 
-    const unfollowWriter = async (id) => {
-        await axios.delete(`http://localhost:8000/user/unfollow/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
-        fetchFollowing();
-    };
-
-    const unfollowNovel = async (id) => {
-        await axios.delete(`http://localhost:8000/user/unfollownovel/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
-        fetchFollowNovel();
-    };
-
-    const getFollowNovelInfo = async () => {
-        const res = await axios.get(`http://localhost:8000/user/follownovel/`, { headers: { 'Authorization': `Bearer ${token}` } });
-        setFollowInfo(res.data.novelLists);
-    };
-
     const fetchNovel = async (id) => {
         const res = await axios.get(`http://localhost:8000/novel/${id}/`);
         setNovel(res.data.novel);
@@ -58,28 +42,13 @@ function Follow() {
         setNovelContent(res.data.episodes);
     };
 
-    const followNovel = async (id) => {
-        await axios.post(`http://localhost:8000/user/follownovel/${id}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
-        getFollowNovelInfo();
-    };
-
     const unFollowNovel = async (id) => {
         await axios.delete(`http://localhost:8000/user/unfollownovel/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
-        getFollowNovelInfo();
-    };
-
-    const isFollow = (id) => {
-        for (let ele of followInfo) {
-            if (ele.novelId === id) {
-                return true;
-            }
-        };
     };
 
     useEffect(() => {
         fetchFollowing();
         fetchFollowNovel();
-        getFollowNovelInfo();
     }, []);
 
     return (

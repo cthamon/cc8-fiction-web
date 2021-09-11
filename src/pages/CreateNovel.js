@@ -47,6 +47,10 @@ function CreateNovel() {
             });
     };
 
+    if (error) {
+        console.log(error);
+    }
+
     let coverImage;
     if (file) {
         coverImage = URL.createObjectURL(file);
@@ -140,7 +144,10 @@ function CreateNovel() {
                                 />
                             </FormControl>
                             <FormControl w='15%'>
-                                <FormLabel>Price</FormLabel>
+                                <FormLabel display='inline-block'>Price *
+                                    <Text display='inline-block' position='absolute' w='300%' pl='5px' fontSize='x-small'>(If Novel is priced, each Episode can't be priced)</Text>
+                                    {/* <Box display='inline-block' w='300%' h='150%' position='absolute' p='0 0 -100px -50px' m='0 0 -100px -40px'><Text pl='50px' color='#fff' _hover={{ color: 'black' }}>(If Novel is priced, each Episode can't be priced)</Text></Box> */}
+                                </FormLabel>
                                 <Input
                                     type='text'
                                     name='price'
@@ -186,7 +193,7 @@ function CreateNovel() {
                         Back
                     </Button>
                 </Box>
-            </form>
+            </form >
         </Flex >
     );
 }

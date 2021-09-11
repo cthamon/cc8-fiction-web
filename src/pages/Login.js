@@ -1,11 +1,14 @@
 import { Box, Flex, Link, Stack, Text, Select, FormControl, FormLabel, FormHelperText, InputGroup, Input, InputRightElement, Button } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
 import axios from 'axios';
 import localStorageService from '../services/localStorageService';
+import { ActivityContext } from '../contexts/ActivityContextProvider';
 
 function Login() {
+    const { cartItem } = useContext(ActivityContext);
+
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -22,12 +25,17 @@ function Login() {
         setError(newError);
     };
 
+    console.log(cartItem);
+
     const handleSubmit = async (e) => {
         try {
             e.preventDefault();
             validateInput();
             const res = await axios.post('http://localhost:8000/user/login', { email, username, password });
             localStorageService.setToken(res.data.token);
+            if (cartItem.length !== 0) {
+                return history.push('/checkout');
+            }
             history.push('/');
         } catch (err) {
             console.dir(err);

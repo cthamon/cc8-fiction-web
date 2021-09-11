@@ -1,7 +1,7 @@
 import Navbar from '../components/Navbar';
-import { Flex, Box, Text, Button, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, Divider, Stack, Image } from '@chakra-ui/react';
+import { Flex, Box, Text, Button, Divider, Stack, Image } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
-import { useState, useEffect, useContext, useRef } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import axios from "axios";
 import localStorageService from '../services/localStorageService';
@@ -11,7 +11,7 @@ function Profile() {
     const token = localStorageService.getToken();
     const history = useHistory();
     const location = useLocation();
-    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
+    const { setNovelId, setEpisodeId } = useContext(ActivityContext);
 
     const userId = location.userId;
     const [novel, setNovel] = useState([]);

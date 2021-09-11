@@ -1,7 +1,7 @@
 import Navbar from '../components/Navbar';
 import { Box, Flex, Stack, Text, Button, Divider, Spacer, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from '@chakra-ui/react';
 import { useState, useEffect, useRef, useContext } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import axios from "axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
@@ -9,7 +9,7 @@ import { ActivityContext } from '../contexts/ActivityContextProvider';
 function Episode() {
     const token = localStorageService.getToken();
     const history = useHistory();
-    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
+    const { novelId, setNovelId, setEpisodeId } = useContext(ActivityContext);
 
     if (!novelId) {
         history.push('/m');

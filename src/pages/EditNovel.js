@@ -1,7 +1,7 @@
 import Navbar from '../components/Navbar';
 import { Box, Flex, Stack, Text, Textarea, FormControl, FormLabel, Input, Button } from '@chakra-ui/react';
 import { useState, useEffect, useContext } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import axios from "axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
@@ -9,7 +9,7 @@ import { ActivityContext } from '../contexts/ActivityContextProvider';
 function EditNovel() {
     const token = localStorageService.getToken();
     const history = useHistory();
-    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
+    const { novelId } = useContext(ActivityContext);
 
     const [input, setInput] = useState({
         title: '',
@@ -73,6 +73,10 @@ function EditNovel() {
 
     if (file) {
         coverImage = URL.createObjectURL(file);
+    }
+
+    if (error) {
+        console.log(error);
     }
 
     return (

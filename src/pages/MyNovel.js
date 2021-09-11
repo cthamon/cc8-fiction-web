@@ -9,7 +9,7 @@ import { ActivityContext } from '../contexts/ActivityContextProvider';
 function MyNovel() {
     const token = localStorageService.getToken();
     const history = useHistory();
-    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
+    const { setNovelId } = useContext(ActivityContext);
 
     const [novel, setNovel] = useState([]);
     const [rating, setRating] = useState([]);

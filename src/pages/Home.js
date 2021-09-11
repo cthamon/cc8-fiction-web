@@ -12,8 +12,8 @@ import { AuthContext } from '../contexts/AuthContextProvider';
 function Home() {
     const history = useHistory();
     const token = localStorageService.getToken();
-    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
-    const { user, setUser } = useContext(AuthContext);
+    const { novelId, setNovelId, setEpisodeId, cartItem, setCartItem, filter, search } = useContext(ActivityContext);
+    const { user } = useContext(AuthContext);
 
     const [novels, setNovels] = useState([]);
     const [novel, setNovel] = useState([]);
@@ -25,6 +25,7 @@ function Home() {
     const [score, setScore] = useState(0);
     const [comment, setComment] = useState([]);
     const [toggleEditReview, setToggleEditReview] = useState(false);
+    const [purchased, setPurchased] = useState([]);
 
     const fetchNovel = async (id) => {
         const res = await axios.get(`http://localhost:8000/novel/${id}/`);
@@ -73,6 +74,20 @@ function Home() {
         fetchRating(novelId);
     };
 
+    const fetchPurchaseList = async () => {
+        const res = await axios.get(`http://localhost:8000/order/purchaselist`, { headers: { 'Authorization': `Bearer ${token}` } });
+        setPurchased(res.data.purchaseList.map(item => item.episodeId));
+    };
+
+    const isPurchased = (id) => {
+        for (let ele of purchased) {
+            if (ele === id) {
+                return true;
+            }
+        };
+        return false;
+    };
+
     const dropdownScore = ([0, 1, 2, 3, 4, 5]);
 
     const averageRating = () => {
@@ -115,6 +130,18 @@ function Home() {
         setReadCounter(counter);
     };
 
+    const [followCounter, setFollowCounter] = useState(0);
+    const followCount = async (id) => {
+        const followInfo = await axios.get(`http://localhost:8000/user/follownovelall`);
+        let counter = 0;
+        for (let ele of followInfo.data.follow) {
+            if (id === ele.novelId) {
+                counter += 1;
+            }
+        }
+        setFollowCounter(counter);
+    };
+
     const H3 = ({ children, ...rest }) => {
         return (
             <Text
@@ -128,8 +155,6 @@ function Home() {
         );
     };
 
-
-
     useEffect(() => {
         const fetchAllNovel = async () => {
             const res = await axios.get('http://localhost:8000/novel');
@@ -137,7 +162,42 @@ function Home() {
         };
         fetchAllNovel();
         getFollowNovelInfo();
+        fetchPurchaseList();
     }, []);
+
+    useEffect(() => {
+        if (filter !== '') {
+            const fetchAllNovel = async () => {
+                const res = await axios.get('http://localhost:8000/novel');
+                return setNovels(res.data.novels.filter(item => item.novelType === filter));
+            };
+            fetchAllNovel();
+        }
+        if (filter === '') {
+            const fetchAllNovel = async () => {
+                const res = await axios.get('http://localhost:8000/novel');
+                return setNovels(res.data.novels);
+            };
+            fetchAllNovel();
+        }
+    }, [filter]);
+
+    useEffect(() => {
+        if (search !== '') {
+            const fetchAllNovel = async () => {
+                const res = await axios.get('http://localhost:8000/novel');
+                return setNovels(res.data.novels.filter(item => String(item.title.toLowerCase()).startsWith(search.toLowerCase())));
+            };
+            fetchAllNovel();
+        }
+        if (search === '') {
+            const fetchAllNovel = async () => {
+                const res = await axios.get('http://localhost:8000/novel');
+                return setNovels(res.data.novels);
+            };
+            fetchAllNovel();
+        }
+    }, [search]);
 
     return (
         <Flex
@@ -175,6 +235,7 @@ function Home() {
                                         fetchNovelContent(item.id);
                                         fetchRating(item.id);
                                         readCount(item.id);
+                                        followCount(item.id);
                                     }}
                                     align='center'
                                 >
@@ -301,12 +362,21 @@ function Home() {
                                                                     </Box>
                                                                     <Box>
                                                                         <Text fontWeight='semibold' mr='20px'>Follow</Text>
-                                                                        <Text>0</Text>
+                                                                        <Text>{followCounter}</Text>
                                                                     </Box>
                                                                 </Flex>
-                                                                <Button mr='5px' color='#fff' bg='primary.500' _hover={{ bg: 'primary.600' }} w='79.61px' onClick={() => { history.push('/read'); setEpisodeId(novelContent[0].id); }}>
-                                                                    Read
-                                                                </Button>
+                                                                {novelContent[0] &&
+                                                                    !isPurchased(novelContent[0].id) &&
+                                                                    <Button mr='5px' color='#fff' bg='yellow.500' _hover={{ bg: 'yellow.600' }} onClick={() => { if (cartItem.includes(novelContent[0].id)) { return; } else { setCartItem([...cartItem, novelContent[0].id]); } }}>
+                                                                        Buy {novel[0].price ? 'novel for' : 'first episode for'} THB {novel[0].price ? novel[0].price : novelContent[0].price}
+                                                                    </Button>
+                                                                }
+                                                                {novelContent[0] &&
+                                                                    isPurchased(novelContent[0].id) &&
+                                                                    <Button mr='5px' color='#fff' bg='primary.500' _hover={{ bg: 'primary.600' }} w='79.61px' onClick={() => { history.push('/read'); setEpisodeId(novelContent[0].id); }}>
+                                                                        Read
+                                                                    </Button>
+                                                                }
                                                                 {!isFollow(item.id) &&
                                                                     <Button mr='5px' color='#fff' bg='primary.500' _hover={{ bg: 'primary.600' }} w='79.61px' onClick={() => followNovel(item.id)}>
                                                                         Follow
@@ -331,18 +401,29 @@ function Home() {
                                                         {novelContent.map((item, j) => {
                                                             return (
                                                                 <Box key={j}>
-                                                                    <Flex
-                                                                        justify='space-between'
-                                                                        cursor='pointer'
-                                                                        m='0 20px'
-                                                                        bg='#fff'
-                                                                        onClick={() => { history.push('/read'); setEpisodeId(item.id); }}
-                                                                        color='secondary.700'
-                                                                        _hover={{ color: 'secondary.500' }}
-                                                                    >
-                                                                        <Text fontWeight='semibold'>Episode {item.episodeNumber} : {item.episodeTitle} </Text>
-                                                                        <Text>{item.updatedAt.split('T')[0]}</Text>
-                                                                    </Flex>
+                                                                    {!isPurchased(item.id) &&
+                                                                        <Flex
+                                                                            justify='space-between'
+                                                                            m='0 20px'
+                                                                            bg='#fff'
+                                                                            color='secondary.700'
+                                                                        >
+                                                                            <Text fontWeight='semibold'>Episode {item.episodeNumber} : {item.episodeTitle}</Text>
+                                                                            <Text fontWeight='semibold' cursor='pointer' color='yellow.500' _hover={{ color: 'yellow.600' }} onClick={() => { if (novel[0].price) { if (cartItem.includes(novelContent[0].id)) { return; } } if (cartItem.includes(item.id)) { return; } else { setCartItem([...cartItem, novel[0].price ? novelContent[0].id : item.id]); } }}>{novel[0].price ? 'Buy this book for THB ' + novel[0].price : 'Buy this episode for THB ' + item.price}</Text>
+                                                                        </Flex>}
+                                                                    {isPurchased(item.id) &&
+                                                                        <Flex
+                                                                            justify='space-between'
+                                                                            cursor='pointer'
+                                                                            m='0 20px'
+                                                                            bg='#fff'
+                                                                            onClick={() => { history.push('/read'); setEpisodeId(item.id); }}
+                                                                            color='secondary.700'
+                                                                            _hover={{ color: 'secondary.500' }}
+                                                                        >
+                                                                            <Text fontWeight='semibold'>Episode {item.episodeNumber} : {item.episodeTitle} </Text>
+                                                                            <Text>{item.updatedAt.split('T')[0]}</Text>
+                                                                        </Flex>}
                                                                 </Box>
                                                             );
                                                         })}
@@ -588,4 +669,4 @@ function Home() {
     );
 };
 
-export default Home;;
+export default Home;

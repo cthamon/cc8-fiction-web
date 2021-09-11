@@ -1,7 +1,7 @@
 import Navbar from '../components/Navbar';
 import { Box, Flex, Text, Textarea, Input, Button } from '@chakra-ui/react';
 import { useState, useEffect, useContext } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import axios from "axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
@@ -9,8 +9,9 @@ import { ActivityContext } from '../contexts/ActivityContextProvider';
 function CreateEpisode() {
     const token = localStorageService.getToken();
     const history = useHistory();
-    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
+    const { novelId } = useContext(ActivityContext);
 
+    const [novel, setNovel] = useState([]);
     const [episode, setEpisode] = useState([]);
     const [error, setError] = useState([]);
 
@@ -20,10 +21,19 @@ function CreateEpisode() {
     const episodeNumber = episode.length + 1;
 
     useEffect(() => {
+        const fetchNovel = async () => {
+            const res = await axios.get(`http://localhost:8000/novel/${novelId}`);
+            if (res.data.novel[0].price === 0) {
+                setNovel(true);
+            } else {
+                setNovel(false);
+            }
+        };
         const fetchEpisode = async () => {
             const res = await axios.get(`http://localhost:8000/novel/${novelId}/episode`);
             setEpisode(res.data.episodes);
         };
+        fetchNovel();
         fetchEpisode();
     }, []);
 
@@ -42,6 +52,10 @@ function CreateEpisode() {
                 }
             });
     };
+
+    if (error) {
+        console.log(error);
+    }
 
     return (
         <Flex
@@ -84,21 +98,23 @@ function CreateEpisode() {
                         onChange={(e) => setEpisodeTitle(e.target.value)}
                         _focus={{ outline: 'none' }}
                     />
-                    <Input
-                        w='8%'
-                        p='0'
-                        m='0'
-                        type='text'
-                        placeholder="Price"
-                        border='none'
-                        rounded='none'
-                        color='secondary.600'
-                        borderBottom='0.5px solid #A0AEC0'
-                        textAlign='center'
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        _focus={{ outline: 'none' }}
-                    />
+                    {novel &&
+                        < Input
+                            w='8%'
+                            p='0'
+                            m='0'
+                            type='text'
+                            placeholder="Price"
+                            border='none'
+                            rounded='none'
+                            color='secondary.600'
+                            borderBottom='0.5px solid #A0AEC0'
+                            textAlign='center'
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            _focus={{ outline: 'none' }}
+                        />
+                    }
                 </Flex>
                 <Box>
                     <Button

@@ -1,5 +1,5 @@
 import Navbar from '../components/Navbar';
-import { Flex, Box, Text, Image, Button, Divider, Textarea, Select } from '@chakra-ui/react';
+import { Flex, Box, Text, Divider } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
@@ -10,7 +10,7 @@ import { ActivityContext } from '../contexts/ActivityContextProvider';
 function History() {
     const token = localStorageService.getToken();
     const history = useHistory();
-    const { novelId, setNovelId, episodeId, setEpisodeId } = useContext(ActivityContext);
+    const { setEpisodeId } = useContext(ActivityContext);
 
     const [histories, setHistories] = useState([]);
 
