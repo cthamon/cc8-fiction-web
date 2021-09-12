@@ -186,7 +186,7 @@ function Home() {
         if (search !== '') {
             const fetchAllNovel = async () => {
                 const res = await axios.get('http://localhost:8000/novel');
-                return setNovels(res.data.novels.filter(item => String(item.title.toLowerCase()).startsWith(search.toLowerCase())));
+                return setNovels(res.data.novels.filter(item => item.title.toLowerCase().includes(search.toLowerCase())));
             };
             fetchAllNovel();
         }
