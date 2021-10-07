@@ -2,7 +2,7 @@ import Navbar from '../components/Navbar';
 import { Box, Flex, Stack, Text, Button, Divider, Spacer, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from '@chakra-ui/react';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { useHistory } from 'react-router';
-import axios from "axios";
+import axios from "../config/axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 
@@ -23,12 +23,12 @@ function Episode() {
     const cancelRef = useRef();
 
     const fetchAllNovel = async () => {
-        const res = await axios.get(`http://localhost:8000/novel/${novelId}`);
+        const res = await axios.get(`/novel/${novelId}`);
         setNovel(res.data.novel);
     };
 
     const fetchEpisode = async () => {
-        const res = await axios.get(`http://localhost:8000/novel/${novelId}/episode`);
+        const res = await axios.get(`/novel/${novelId}/episode`);
         setEpisode(res.data.episodes);
     };
 
@@ -56,7 +56,7 @@ function Episode() {
                             justify='space-between'
                             mb='20px'
                         >
-                            <Box w='20%'>
+                            <Box w='20%' display={['none', 'none', 'block', 'block']}>
                                 <Box
                                     backgroundImage={item.cover}
                                     backgroundSize='cover'
@@ -66,7 +66,7 @@ function Episode() {
                                     h='300px'
                                 />
                             </Box>
-                            <Stack w='80%'>
+                            <Stack w={['100%', '100%', '80%', '80%']} m='0 10px'>
                                 <Box>
                                     <Text fontWeight='bold' fontSize='2xl'>{item.title}</Text>
                                 </Box>
@@ -111,7 +111,7 @@ function Episode() {
                         <Divider />
                         <Button
                             mt='20px'
-                            w='11.7%'
+                            w='140px'
                             color='white'
                             bg='primary.500'
                             onClick={() => history.push('/ep')}
@@ -169,7 +169,7 @@ function Episode() {
                                                                 ml={3}
                                                                 onClick={
                                                                     async () => {
-                                                                        await axios.delete(`http://localhost:8000/novel/content/${deleteObject.episodeId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                                                                        await axios.delete(`/novel/content/${deleteObject.episodeId}`, { headers: { 'Authorization': `Bearer ${token}` } });
                                                                         setIsOpen(false);
                                                                         fetchEpisode();
                                                                     }

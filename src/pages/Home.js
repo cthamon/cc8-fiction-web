@@ -1,10 +1,10 @@
 import Navbar from '../components/Navbar';
 import Banner from '../components/Banner/Banner';
-import { Flex, Box, Text, Image, Button, Divider, Textarea, Select } from '@chakra-ui/react';
-import { CloseIcon } from '@chakra-ui/icons';
+import { Flex, Box, Text, Image, Button, Divider, Textarea, Select, Input } from '@chakra-ui/react';
+import { CloseIcon, SearchIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
-import axios from "axios";
+import axios from "../config/axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 import { AuthContext } from '../contexts/AuthContextProvider';
@@ -12,7 +12,7 @@ import { AuthContext } from '../contexts/AuthContextProvider';
 function Home() {
     const history = useHistory();
     const token = localStorageService.getToken();
-    const { novelId, setNovelId, setEpisodeId, cartItem, setCartItem, filter, search } = useContext(ActivityContext);
+    const { novelId, setNovelId, setEpisodeId, cartItem, setCartItem, filter, search, setSearch, setFilter } = useContext(ActivityContext);
     const { user } = useContext(AuthContext);
 
     const [novels, setNovels] = useState([]);
@@ -26,42 +26,44 @@ function Home() {
     const [comment, setComment] = useState([]);
     const [toggleEditReview, setToggleEditReview] = useState(false);
     const [purchased, setPurchased] = useState([]);
+    const [searchValue, setSearchValue] = useState('');
+    const [novelTypes, setNovelTypes] = useState([]);
 
     const fetchNovel = async (id) => {
-        const res = await axios.get(`http://localhost:8000/novel/${id}/`);
+        const res = await axios.get(`/novel/${id}/`);
         setNovel(res.data.novel);
     };
 
     const fetchNovelContent = async (id) => {
-        const res = await axios.get(`http://localhost:8000/novel/${id}/episode`);
+        const res = await axios.get(`/novel/${id}/episode`);
         setNovelContent(res.data.episodes);
     };
 
     const getFollowNovelInfo = async () => {
-        const res = await axios.get(`http://localhost:8000/user/follownovel/`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await axios.get(`/user/follownovel/`, { headers: { 'Authorization': `Bearer ${token}` } });
         setFollowInfo(res.data.novelLists);
     };
 
     const followNovel = async (id) => {
-        await axios.post(`http://localhost:8000/user/follownovel/${id}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
+        await axios.post(`/user/follownovel/${id}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
         getFollowNovelInfo();
     };
 
     const unFollowNovel = async (id) => {
-        await axios.delete(`http://localhost:8000/user/unfollownovel/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        await axios.delete(`/user/unfollownovel/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
         getFollowNovelInfo();
     };
 
     const fetchRating = async (id) => {
-        const res = await axios.get(`http://localhost:8000/novel/rating/${id}`);
+        const res = await axios.get(`/novel/rating/${id}`);
         setRating(res.data.novelRating);
     };
 
     const writeReview = async (id) => {
         if (toggleEditReview) {
-            await axios.patch(`http://localhost:8000/novel/updaterating/${id}`, { score, comment }, { headers: { 'Authorization': `Bearer ${token}` } });
+            await axios.patch(`/novel/updaterating/${id}`, { score, comment }, { headers: { 'Authorization': `Bearer ${token}` } });
         } else {
-            await axios.post(`http://localhost:8000/novel/rating/${id}`, { score, comment }, { headers: { 'Authorization': `Bearer ${token}` } });
+            await axios.post(`/novel/rating/${id}`, { score, comment }, { headers: { 'Authorization': `Bearer ${token}` } });
         }
         setToggleReview(false);
         setScore(0);
@@ -70,12 +72,12 @@ function Home() {
     };
 
     const deleteRating = async (id) => {
-        await axios.delete(`http://localhost:8000/novel/rating/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        await axios.delete(`/novel/rating/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
         fetchRating(novelId);
     };
 
     const fetchPurchaseList = async () => {
-        const res = await axios.get(`http://localhost:8000/order/purchaselist`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await axios.get(`/order/purchaselist`, { headers: { 'Authorization': `Bearer ${token}` } });
         setPurchased(res.data.purchaseList.map(item => item.episodeId));
     };
 
@@ -120,7 +122,7 @@ function Home() {
 
     const [readCounter, setReadCounter] = useState(0);
     const readCount = async (id) => {
-        const readInfo = await axios.get(`http://localhost:8000/user/allread`);
+        const readInfo = await axios.get(`/user/allread`);
         let counter = 0;
         for (let ele of readInfo.data.novelList) {
             if (id === ele.novelId) {
@@ -132,7 +134,7 @@ function Home() {
 
     const [followCounter, setFollowCounter] = useState(0);
     const followCount = async (id) => {
-        const followInfo = await axios.get(`http://localhost:8000/user/follownovelall`);
+        const followInfo = await axios.get(`/user/follownovelall`);
         let counter = 0;
         for (let ele of followInfo.data.follow) {
             if (id === ele.novelId) {
@@ -145,7 +147,7 @@ function Home() {
     const H3 = ({ children, ...rest }) => {
         return (
             <Text
-                fontSize='xl'
+                fontSize={['lg', 'lg', 'xl', 'xl']}
                 fontWeight='semibold'
                 color='secondary.600'
                 {...rest}
@@ -157,8 +159,9 @@ function Home() {
 
     useEffect(() => {
         const fetchAllNovel = async () => {
-            const res = await axios.get('http://localhost:8000/novel');
+            const res = await axios.get('/novel');
             setNovels(res.data.novels);
+            setNovelTypes(res.data.novels.map(item => item.novelType));
         };
         fetchAllNovel();
         getFollowNovelInfo();
@@ -168,14 +171,14 @@ function Home() {
     useEffect(() => {
         if (filter !== '') {
             const fetchAllNovel = async () => {
-                const res = await axios.get('http://localhost:8000/novel');
+                const res = await axios.get('/novel');
                 return setNovels(res.data.novels.filter(item => item.novelType === filter));
             };
             fetchAllNovel();
         }
         if (filter === '') {
             const fetchAllNovel = async () => {
-                const res = await axios.get('http://localhost:8000/novel');
+                const res = await axios.get('/novel');
                 return setNovels(res.data.novels);
             };
             fetchAllNovel();
@@ -185,14 +188,14 @@ function Home() {
     useEffect(() => {
         if (search !== '') {
             const fetchAllNovel = async () => {
-                const res = await axios.get('http://localhost:8000/novel');
+                const res = await axios.get('/novel');
                 return setNovels(res.data.novels.filter(item => item.title.toLowerCase().includes(search.toLowerCase())));
             };
             fetchAllNovel();
         }
         if (search === '') {
             const fetchAllNovel = async () => {
-                const res = await axios.get('http://localhost:8000/novel');
+                const res = await axios.get('/novel');
                 return setNovels(res.data.novels);
             };
             fetchAllNovel();
@@ -203,7 +206,7 @@ function Home() {
         <Flex
             direction='column'
             align='center'
-            maxW={{ xl: '1200px' }}
+            maxW={['auto', 'auto', '1200px', '1200px']}
             m='0 auto'
         >
             <Navbar />
@@ -211,10 +214,65 @@ function Home() {
             <Box w='100%'>
                 <Flex
                     mt='10px'
-                    justify='flex-start'
+                    justify={['center', 'center', 'flex-start', 'flex-start']}
                     w='100%'
                 >
                     <H3>Novels</H3>
+                </Flex>
+                <Flex
+                    mt='10px'
+                    display={['flex', 'flex', 'none', 'none']}
+                    justify={['center', 'center', 'center', 'center']}
+                    align='center'
+                    w='100%'
+                >
+                    <SearchIcon position='relative' />
+                    <form onSubmit={(e) => { e.preventDefault(); setSearch(searchValue); setSearchValue(''); }}>
+                        <Input
+                            w='80%'
+                            ml='10px'
+                            placeholder='Search'
+                            value={searchValue}
+                            onChange={e => setSearchValue(e.target.value)}
+                        />
+                        <CloseIcon w='10px' position='relative' right='20px' cursor='pointer' zIndex='1' onClick={() => { setSearch(''); }} />
+                    </form>
+                </Flex>
+                <Flex
+                    mt='10px'
+                    display={['flex', 'flex', 'none', 'none']}
+                    justify={['center', 'center', 'center', 'center']}
+                    align='center'
+                    w='100%'
+                >
+                    {novelTypes.map((item, i) => {
+                        return (
+                            <Button
+                                key={i}
+                                size='sm'
+                                rounded='md'
+                                color='secondary.600'
+                                bg='secondary.100'
+                                mr={2}
+                                onClick={() => setFilter(item)}
+                                _hover={{ color: 'primary.500' }}
+                            >
+                                {item}
+                            </Button>
+                        );
+                    })}
+                    {filter &&
+                        <Button
+                            size='sm'
+                            rounded='md'
+                            color='secondary.600'
+                            bg='red.100'
+                            mr={2}
+                            onClick={() => setFilter('')}
+                            _hover={{ color: 'red.500' }}
+                        >
+                            Clear Filter
+                        </Button>}
                 </Flex>
                 <Flex
                     justify='center'
@@ -273,8 +331,8 @@ function Home() {
                                             left='50%'
                                             transform='translate(-50%, -50%)'
                                             overflow='scroll'
-                                            w='900px'
-                                            maxH='750px'
+                                            w={['100%', '100%', '750px', '900px']}
+                                            maxH={['100%', '100%', '750px', '750px']}
                                             bg='#fff'
                                             boxShadow='rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;'
                                             css={{
@@ -306,6 +364,7 @@ function Home() {
                                                     <Box key={i}>
                                                         <Flex justify='center'>
                                                             <Box
+                                                                display={['none', 'none', 'block', 'block']}
                                                                 backgroundImage={`url(${item.cover})`}
                                                                 backgroundSize='cover'
                                                                 backgroundPosition='center'
@@ -317,7 +376,7 @@ function Home() {
                                                             </Box>
                                                             <Box w='600px' m='20px'>
                                                                 <Text
-                                                                    fontSize='2xl'
+                                                                    fontSize={['xl', 'xl', '2xl', '2xl']}
                                                                     fontWeight='semibold'
                                                                     color='secondary.700'
                                                                     m='0 0 10px 0'
@@ -350,39 +409,39 @@ function Home() {
                                                                 </H3>
                                                                 <Text m='10px 0' fontWeight='semibold' color='secondary.600'>{item.novelType}</Text>
                                                                 <Text fontWeight='semibold' color='secondary.700'>Description</Text>
-                                                                <Text m='0 0 10px 0'>{item.description}</Text>
+                                                                <Text m='0 0 10px 0' fontSize={['sm', 'sm', 'md', 'md']}>{item.description}</Text>
                                                                 <Flex m='0 0 20px 0'>
                                                                     <Box>
-                                                                        <Text fontWeight='semibold' mr='40px'>Rating</Text>
-                                                                        <Text>{averageRating()}</Text>
+                                                                        <Text fontWeight='semibold' fontSize={['sm', 'sm', 'md', 'md']} mr='40px'>Rating</Text>
+                                                                        <Text fontSize={['sm', 'sm', 'md', 'md']}>{averageRating()}</Text>
                                                                     </Box>
                                                                     <Box>
-                                                                        <Text fontWeight='semibold' mr='40px'>Read</Text>
-                                                                        <Text>{readCounter}</Text>
+                                                                        <Text fontWeight='semibold' fontSize={['sm', 'sm', 'md', 'md']} mr='40px'>Read</Text>
+                                                                        <Text fontSize={['sm', 'sm', 'md', 'md']}>{readCounter}</Text>
                                                                     </Box>
                                                                     <Box>
-                                                                        <Text fontWeight='semibold' mr='20px'>Follow</Text>
-                                                                        <Text>{followCounter}</Text>
+                                                                        <Text fontWeight='semibold' fontSize={['sm', 'sm', 'md', 'md']} mr='20px'>Follow</Text>
+                                                                        <Text fontSize={['sm', 'sm', 'md', 'md']}>{followCounter}</Text>
                                                                     </Box>
                                                                 </Flex>
                                                                 {novelContent[0] &&
                                                                     !isPurchased(novelContent[0].id) &&
-                                                                    <Button mr='5px' color='#fff' bg='yellow.500' _hover={{ bg: 'yellow.600' }} onClick={() => { if (cartItem.includes(novelContent[0].id)) { return; } else { setCartItem([...cartItem, novelContent[0].id]); } }}>
+                                                                    <Button fontSize={['sm', 'sm', 'md', 'md']} mr='5px' color='#fff' bg='yellow.500' _hover={{ bg: 'yellow.600' }} onClick={() => { if (cartItem.includes(novelContent[0].id)) { return; } else { setCartItem([...cartItem, novelContent[0].id]); } }}>
                                                                         Buy {novel[0].price ? 'novel for' : 'first episode for'} THB {novel[0].price ? novel[0].price : novelContent[0].price}
                                                                     </Button>
                                                                 }
                                                                 {novelContent[0] &&
                                                                     isPurchased(novelContent[0].id) &&
-                                                                    <Button mr='5px' color='#fff' bg='primary.500' _hover={{ bg: 'primary.600' }} w='79.61px' onClick={() => { history.push('/read'); setEpisodeId(novelContent[0].id); }}>
+                                                                    <Button fontSize={['sm', 'sm', 'md', 'md']} mr='5px' color='#fff' bg='primary.500' _hover={{ bg: 'primary.600' }} w='79.61px' onClick={() => { history.push('/read'); setEpisodeId(novelContent[0].id); }}>
                                                                         Read
                                                                     </Button>
                                                                 }
                                                                 {!isFollow(item.id) &&
-                                                                    <Button mr='5px' color='#fff' bg='primary.500' _hover={{ bg: 'primary.600' }} w='79.61px' onClick={() => followNovel(item.id)}>
+                                                                    <Button fontSize={['sm', 'sm', 'md', 'md']} mr='5px' color='#fff' bg='primary.500' _hover={{ bg: 'primary.600' }} w='79.61px' onClick={() => followNovel(item.id)}>
                                                                         Follow
                                                                     </Button>}
                                                                 {isFollow(item.id) &&
-                                                                    <Button color='#fff' bg='red.500' _hover={{ bg: 'red.600' }} w='79.61px' onClick={() => unFollowNovel(item.id)}>
+                                                                    <Button fontSize={['sm', 'sm', 'md', 'md']} color='#fff' bg='red.500' _hover={{ bg: 'red.600' }} w='79.61px' onClick={() => unFollowNovel(item.id)}>
                                                                         Unfollow
                                                                     </Button>}
                                                             </Box>
@@ -390,7 +449,7 @@ function Home() {
                                                         <Divider mb='20px' />
                                                         <Flex justify='space-between' align='center' m='0 20px 10px 20px'>
                                                             <Text
-                                                                fontSize='xl'
+                                                                fontSize={['lg', 'lg', 'xl', 'xl']}
                                                                 fontWeight='semibold'
                                                                 textAlign='center'
                                                                 color='secondary.700'
@@ -408,8 +467,8 @@ function Home() {
                                                                             bg='#fff'
                                                                             color='secondary.700'
                                                                         >
-                                                                            <Text fontWeight='semibold'>Episode {item.episodeNumber} : {item.episodeTitle}</Text>
-                                                                            <Text fontWeight='semibold' cursor='pointer' color='yellow.500' _hover={{ color: 'yellow.600' }} onClick={() => { if (novel[0].price) { if (cartItem.includes(novelContent[0].id)) { return; } } if (cartItem.includes(item.id)) { return; } else { setCartItem([...cartItem, novel[0].price ? novelContent[0].id : item.id]); } }}>{novel[0].price ? 'Buy this book for THB ' + novel[0].price : 'Buy this episode for THB ' + item.price}</Text>
+                                                                            <Text fontSize={['sm', 'sm', 'md', 'md']} fontWeight='semibold'>Episode {item.episodeNumber} : {item.episodeTitle}</Text>
+                                                                            <Text fontSize={['sm', 'sm', 'md', 'md']} fontWeight='semibold' cursor='pointer' color='yellow.500' _hover={{ color: 'yellow.600' }} onClick={() => { if (novel[0].price) { if (cartItem.includes(novelContent[0].id)) { return; } } if (cartItem.includes(item.id)) { return; } else { setCartItem([...cartItem, novel[0].price ? novelContent[0].id : item.id]); } }}>{novel[0].price ? 'Buy this book for THB ' + novel[0].price : 'Buy this episode for THB ' + item.price}</Text>
                                                                         </Flex>}
                                                                     {isPurchased(item.id) &&
                                                                         <Flex
@@ -421,8 +480,8 @@ function Home() {
                                                                             color='secondary.700'
                                                                             _hover={{ color: 'secondary.500' }}
                                                                         >
-                                                                            <Text fontWeight='semibold'>Episode {item.episodeNumber} : {item.episodeTitle} </Text>
-                                                                            <Text>{item.updatedAt.split('T')[0]}</Text>
+                                                                            <Text fontSize={['sm', 'sm', 'md', 'md']} fontWeight='semibold'>Episode {item.episodeNumber} : {item.episodeTitle} </Text>
+                                                                            <Text fontSize={['sm', 'sm', 'md', 'md']}>{item.updatedAt.split('T')[0]}</Text>
                                                                         </Flex>}
                                                                 </Box>
                                                             );
@@ -430,7 +489,7 @@ function Home() {
                                                         <Divider m='20px 0' />
                                                         <Flex justify='space-between' align='center' m='0 20px'>
                                                             <Text
-                                                                fontSize='xl'
+                                                                fontSize={['lg', 'lg', 'xl', 'xl']}
                                                                 fontWeight='semibold'
                                                                 textAlign='center'
                                                                 color='secondary.700'
@@ -439,6 +498,7 @@ function Home() {
                                                             </Text>
                                                             {!isReview(user.id) &&
                                                                 <Button
+                                                                    fontSize={['sm', 'sm', 'md', 'md']}
                                                                     color='#fff'
                                                                     bg='primary.500'
                                                                     _hover={{ bg: 'primary.600' }}
@@ -448,6 +508,7 @@ function Home() {
                                                                 </Button>}
                                                             {isReview(user.id) &&
                                                                 <Text
+                                                                    fontSize={['sm', 'sm', 'md', 'md']}
                                                                     fontWeight='semibold'
                                                                     color='gray.600'
                                                                 >
@@ -462,7 +523,7 @@ function Home() {
                                                                         <Flex m='20px 40px' >
                                                                             <Image
                                                                                 borderRadius='full'
-                                                                                boxSize='48px'
+                                                                                boxSize={['30px', '30px', '48px', '48px']}
                                                                                 mr='10px'
                                                                                 src={item.User.profileImg}
                                                                                 alt="Profile Picture"
@@ -474,10 +535,11 @@ function Home() {
                                                                                 w='100%'
                                                                             >
                                                                                 <Flex justify='space-between' align='center' >
-                                                                                    <Text fontWeight='semibold' color='primary.500'>{item.User.username}</Text>
-                                                                                    <Text fontWeight='semibold'>Rating: {item.score} / 5</Text>
+                                                                                    <Text fontSize={['md', 'md', 'md', 'md']} fontWeight='semibold' color='primary.500'>{item.User.username}</Text>
+                                                                                    <Text fontSize={['sm', 'sm', 'md', 'md']} fontWeight='semibold'>Rating: {item.score} / 5</Text>
                                                                                 </Flex>
                                                                                 <Text
+                                                                                    fontSize={['sm', 'sm', 'md', 'md']}
                                                                                     fontWeight='semibold'
                                                                                     color='secondary.700'
                                                                                 >
@@ -560,7 +622,7 @@ function Home() {
                                                 <Box
                                                     position='sticky'
                                                     p='1px'
-                                                    w='600px'
+                                                    w={['100%', '100%', '600px', '600px']}
                                                     bg='#fff'
                                                     rounded='xl'
                                                     boxShadow='rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;'

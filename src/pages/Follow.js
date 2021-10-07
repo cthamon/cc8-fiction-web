@@ -3,7 +3,7 @@ import { Flex, Box, Text, Image, Button, Divider } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
-import axios from 'axios';
+import axios from '../config/axios';
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 import { AuthContext } from '../contexts/AuthContextProvider';
@@ -23,27 +23,27 @@ function Follow() {
     const token = localStorageService.getToken();
 
     const fetchFollowing = async () => {
-        const res = await axios.get('http://localhost:8000/user/follow', { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await axios.get('/user/follow', { headers: { 'Authorization': `Bearer ${token}` } });
         setFollowlist(res.data.followLists);
     };
 
     const fetchFollowNovel = async () => {
-        const res = await axios.get('http://localhost:8000/user/follownovel', { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await axios.get('/user/follownovel', { headers: { 'Authorization': `Bearer ${token}` } });
         setNovellist(res.data.novelLists);
     };
 
     const fetchNovel = async (id) => {
-        const res = await axios.get(`http://localhost:8000/novel/${id}/`);
+        const res = await axios.get(`/novel/${id}/`);
         setNovel(res.data.novel);
     };
 
     const fetchNovelContent = async (id) => {
-        const res = await axios.get(`http://localhost:8000/novel/${id}/episode`);
+        const res = await axios.get(`/novel/${id}/episode`);
         setNovelContent(res.data.episodes);
     };
 
     const unFollowNovel = async (id) => {
-        await axios.delete(`http://localhost:8000/user/unfollownovel/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        await axios.delete(`/user/unfollownovel/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
     };
 
     useEffect(() => {

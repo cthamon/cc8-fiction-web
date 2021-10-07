@@ -2,7 +2,7 @@ import Navbar from '../components/Navbar';
 import { Box, Flex, Stack, Text, Textarea, FormControl, FormLabel, Input, Button } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
-import axios from "axios";
+import axios from "../config/axios";
 import localStorageService from '../services/localStorageService';
 
 function CreateNovel() {
@@ -36,7 +36,7 @@ function CreateNovel() {
         formData.append('novelType', novelType);
         formData.append('price', price);
         formData.append('image', file);
-        axios.post('http://localhost:8000/novel/create', formData, { headers: { 'Authorization': `Bearer ${token}` } })
+        axios.post('/novel/create', formData, { headers: { 'Authorization': `Bearer ${token}` } })
             .then(() => { history.push('/m'); history.go(0); })
             .catch(err => {
                 if (err.response) {
@@ -77,6 +77,7 @@ function CreateNovel() {
             <form onSubmit={handleSubmit}>
                 <Flex
                     justify='space-between'
+                    display={['block', 'block', 'flex', 'flex']}
                 >
                     <Box w='21%'>
                         <FormControl>
@@ -94,13 +95,14 @@ function CreateNovel() {
                                     backgroundSize='cover'
                                     backgroundPosition='center'
                                     rounded='xl'
+                                    w={['246px', '246px', 'auto', 'auto']}
                                     h='100%'
                                 >
                                     {
                                         coverImage ? '' : ''
                                             ||
                                             <Flex
-                                                justify='center'
+                                                justify={['flex-start', 'flex-start', 'center', 'center']}
                                                 align='center'
                                                 h='100%'
                                             >

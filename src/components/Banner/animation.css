@@ -1,3 +1,41 @@
+@media(max-width:749px) 
+{
+    .banner[moveleft='1'] {
+        animation: moveleft749 0.4s linear;
+    }
+
+    .banner[moveright='1'] {
+        animation: moveright749 0.4s linear;
+    }
+
+    .banner[quickmoveleft='1'] {
+        animation: moveleft749 0.15s linear;
+    }
+
+    .banner[quickmoveright='1'] {
+        animation: moveright749 0.15s linear;
+    }
+}
+
+@media(min-width:749px) 
+{
+    .banner[moveleft='1'] {
+        animation: moveleft 0.4s linear;
+    }
+
+    .banner[moveright='1'] {
+        animation: moveright 0.4s linear;
+    }
+
+    .banner[quickmoveleft='1'] {
+        animation: moveleft 0.15s linear;
+    }
+
+    .banner[quickmoveright='1'] {
+        animation: moveright 0.15s linear;
+    }
+}
+
 @keyframes moveleft {
     0% {right: 0px;}
     100% {right: 692px}
@@ -8,18 +46,12 @@
     100% {left: 692px}
 }
 
-.banner[moveleft='1'] {
-    animation: moveleft 0.4s linear;
+@keyframes moveleft749 {
+    0% {right: 0px;}
+    100% {right: 390px}
 }
 
-.banner[moveright='1'] {
-    animation: moveright 0.4s linear;
-}
-
-.banner[quickmoveleft='1'] {
-    animation: moveleft 0.15s linear;
-}
-
-.banner[quickmoveright='1'] {
-    animation: moveright 0.15s linear;
+@keyframes moveright749 {
+    0% {left: 0px;}
+    100% {left: 390px}
 }

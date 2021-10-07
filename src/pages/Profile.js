@@ -3,7 +3,7 @@ import { Flex, Box, Text, Button, Divider, Stack, Image } from '@chakra-ui/react
 import { CloseIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router';
-import axios from "axios";
+import axios from "../config/axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 
@@ -24,24 +24,24 @@ function Profile() {
     const [novelContent, setNovelContent] = useState([]);
 
     const fetchNovel = async () => {
-        const res = await axios.get(`http://localhost:8000/novel/user/${userId}`);
+        const res = await axios.get(`/novel/user/${userId}`);
         setNovel(res.data.novels);
     };
 
     const fetchUser = async () => {
-        const res = await axios.get(`http://localhost:8000/user/profile/${userId}`);
+        const res = await axios.get(`/user/profile/${userId}`);
         setProfile(res.data.user);
     };
 
     const fetchRating = async () => {
-        const res = await axios.get(`http://localhost:8000/novel/userrating/${userId}`);
+        const res = await axios.get(`/novel/userrating/${userId}`);
         const operation = res.data.novelRating.map(item => item.reduce((acc, cv) => cv.score + acc, 0) / item.length);
         setRating(operation);
     };
 
     const readCount = async () => {
-        const res = await axios.get(`http://localhost:8000/novel/user/${userId}`);
-        const readInfo = await axios.get(`http://localhost:8000/user/allread`);
+        const res = await axios.get(`/novel/user/${userId}`);
+        const readInfo = await axios.get(`/user/allread`);
         const counter = res.data.novels.map(item => {
             let sum = 0;
             for (let ele of readInfo.data.novelList) {
@@ -54,24 +54,24 @@ function Profile() {
     };
 
     const fetchNovelContent = async (id) => {
-        const res = await axios.get(`http://localhost:8000/novel/${id}/episode`);
+        const res = await axios.get(`/novel/${id}/episode`);
         setNovelContent(res.data.episodes);
     };
 
     const [followList, setFollowList] = useState([]);
 
     const fetchFollowList = async () => {
-        const res = await axios.get(`http://localhost:8000/user/follow/`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await axios.get(`/user/follow/`, { headers: { 'Authorization': `Bearer ${token}` } });
         setFollowList(res.data.followLists);
     };
 
     const followUser = async () => {
-        await axios.post(`http://localhost:8000/user/follow/${userId}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
+        await axios.post(`/user/follow/${userId}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
         fetchFollowList();
     };
 
     const unFollowUser = async () => {
-        await axios.delete(`http://localhost:8000/user/unfollow/${userId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        await axios.delete(`/user/unfollow/${userId}`, { headers: { 'Authorization': `Bearer ${token}` } });
         fetchFollowList();
     };
 

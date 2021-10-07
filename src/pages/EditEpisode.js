@@ -2,7 +2,7 @@ import Navbar from '../components/Navbar';
 import { Box, Flex, Text, Textarea, Input, Button } from '@chakra-ui/react';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
-import axios from "axios";
+import axios from "../config/axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 
@@ -19,7 +19,7 @@ function CreateEpisode() {
     const [content, setContent] = useState('');
 
     const fetchParagraph = async () => {
-        const res = await axios.get(`http://localhost:8000/novel/paragraph/${episodeId}`);
+        const res = await axios.get(`/novel/paragraph/${episodeId}`);
         setEpisodeNumber(res.data.episodeNumber);
         setEpisodeTitle(res.data.episodeTitle);
         setPrice(res.data.price);
@@ -37,7 +37,7 @@ function CreateEpisode() {
     let paragraph = content.split(/\r?\n/);
 
     const handleSubmit = (e) => {
-        axios.patch(`http://localhost:8000/novel/editcontent/${episodeId}`, { episodeNumber, episodeTitle, price, paragraph }, { headers: { 'Authorization': `Bearer ${token}` } })
+        axios.patch(`/novel/editcontent/${episodeId}`, { episodeNumber, episodeTitle, price, paragraph }, { headers: { 'Authorization': `Bearer ${token}` } })
             .then(res => {
                 history.push('/ninfo');
             })
@@ -58,7 +58,7 @@ function CreateEpisode() {
         <Flex
             direction='column'
             align='center'
-            maxW={{ xl: '1200px' }}
+            maxW='1200px'
             m='0 auto'
         >
             <Navbar />

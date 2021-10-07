@@ -71,7 +71,6 @@ function Banner() {
                 overflow='hidden'
             >
                 <Flex
-                    display={['none', 'none', 'flex', 'flex']}
                     w='40px'
                     h='40px'
                     justify='center'
@@ -93,10 +92,8 @@ function Banner() {
                     moveright={moveright}
                     quickmoveleft={quickmoveleft}
                     quickmoveright={quickmoveright}
-                    display={['none', 'none', 'block', 'block']}
-                    minW='682px'
-                    h='311.891'
-                    bg='secondary.600'
+                    minW={['380px', '380px', '682px', '682px']}
+                    h={['174px', '174px', '312px', '312px']}
                     mr='20px'
                     userSelect='none'
                     position='relative'
@@ -113,10 +110,8 @@ function Banner() {
                     moveright={moveright}
                     quickmoveleft={quickmoveleft}
                     quickmoveright={quickmoveright}
-                    display={['none', 'none', 'block', 'block']}
-                    minW='682px'
-                    h='311.891'
-                    bg='secondary.600'
+                    minW={['380px', '380px', '682px', '682px']}
+                    h={['174px', '174px', '312px', '312px']}
                     userSelect='none'
                     position='relative'
                     onAnimationEnd={() => { setMoveLeft(0); setMoveRight(0); setQuickMoveLeft(0); setQuickMoveRight(0); }}
@@ -132,9 +127,8 @@ function Banner() {
                     moveright={moveright}
                     quickmoveleft={quickmoveleft}
                     quickmoveright={quickmoveright}
-                    display={['none', 'none', 'block', 'block']}
-                    minW='682px'
-                    h='311.891'
+                    minW={['380px', '380px', '682px', '682px']}
+                    h={['174px', '174px', '312px', '312px']}
                     m='0 20px'
                     userSelect='none'
                     position='relative'
@@ -151,10 +145,8 @@ function Banner() {
                     moveright={moveright}
                     quickmoveleft={quickmoveleft}
                     quickmoveright={quickmoveright}
-                    display={['none', 'none', 'block', 'block']}
-                    minW='682px'
-                    h='311.891'
-                    bg='secondary.600'
+                    minW={['380px', '380px', '682px', '682px']}
+                    h={['174px', '174px', '312px', '312px']}
                     userSelect='none'
                     position='relative'
                     onAnimationEnd={() => { setMoveLeft(0); setMoveRight(0); setQuickMoveLeft(0); setQuickMoveRight(0); }}
@@ -170,10 +162,8 @@ function Banner() {
                     moveright={moveright}
                     quickmoveleft={quickmoveleft}
                     quickmoveright={quickmoveright}
-                    display={['none', 'none', 'block', 'block']}
-                    minW='682px'
-                    h='311.891'
-                    bg='secondary.600'
+                    minW={['380px', '380px', '682px', '682px']}
+                    h={['174px', '174px', '312px', '312px']}
                     ml='20px'
                     userSelect='none'
                     position='relative'
@@ -185,7 +175,6 @@ function Banner() {
                     />
                 </Box>
                 <Flex
-                    display={['none', 'none', 'flex', 'flex']}
                     w='40px'
                     h='40px'
                     justify='center'
@@ -203,7 +192,6 @@ function Banner() {
                 </Flex>
             </Flex>
             <RadioGroup
-                display={['none', 'none', 'block', 'block']}
                 align='center'
                 value={radioNumber}
             >

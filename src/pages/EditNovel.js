@@ -2,7 +2,7 @@ import Navbar from '../components/Navbar';
 import { Box, Flex, Stack, Text, Textarea, FormControl, FormLabel, Input, Button } from '@chakra-ui/react';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
-import axios from "axios";
+import axios from "../config/axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 
@@ -26,7 +26,7 @@ function EditNovel() {
 
     useEffect(() => {
         const fetchAllNovel = async () => {
-            const res = await axios.get(`http://localhost:8000/novel/${novelId}`);
+            const res = await axios.get(`/novel/${novelId}`);
             setInput(prev => ({
                 ...prev,
                 title: res.data.novel[0].title,
@@ -60,7 +60,7 @@ function EditNovel() {
         formData.append('novelType', novelType);
         formData.append('price', price);
         formData.append('image', file);
-        axios.patch(`http://localhost:8000/novel/edit/${novelId}`, formData, { headers: { 'Authorization': `Bearer ${token}` } })
+        axios.patch(`/novel/edit/${novelId}`, formData, { headers: { 'Authorization': `Bearer ${token}` } })
             .then(() => { history.push('/ninfo'); })
             .catch(err => {
                 if (err.response) {
@@ -82,7 +82,7 @@ function EditNovel() {
     return (
         <Flex
             direction='column'
-            maxW={{ xl: '1200px' }}
+            maxW='1200px'
             m='0 auto'
         >
             <Navbar />
@@ -100,6 +100,7 @@ function EditNovel() {
             <form onSubmit={handleSubmit}>
                 <Flex
                     justify='space-between'
+                    display={['block', 'block', 'flex', 'flex']}
                 >
                     <Box w='21%'>
                         <FormControl>
@@ -117,13 +118,14 @@ function EditNovel() {
                                     backgroundSize='cover'
                                     backgroundPosition='center'
                                     rounded='xl'
+                                    w={['246px', '246px', 'auto', 'auto']}
                                     h='100%'
                                 >
                                     {
                                         coverImage ? '' : ''
                                             ||
                                             <Flex
-                                                justify='center'
+                                                justify={['flex-start', 'flex-start', 'center', 'center']}
                                                 align='center'
                                                 h='100%'
                                             >

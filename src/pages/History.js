@@ -3,7 +3,7 @@ import { Flex, Box, Text, Divider } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
-import axios from "axios";
+import axios from "../config/axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 
@@ -15,7 +15,7 @@ function History() {
     const [histories, setHistories] = useState([]);
 
     const fetchHistory = async () => {
-        const res = await axios.get('http://localhost:8000/user/history', { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await axios.get('/user/history', { headers: { 'Authorization': `Bearer ${token}` } });
         setHistories(res.data.histories);
     };
 

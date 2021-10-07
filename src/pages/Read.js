@@ -3,7 +3,7 @@ import { Flex, Box, Text, Image, Button, Divider, Textarea } from '@chakra-ui/re
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
-import axios from "axios";
+import axios from "../config/axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 import { AuthContext } from '../contexts/AuthContextProvider';
@@ -28,12 +28,12 @@ function Read() {
     const [commentEdit, setCommentEdit] = useState([]);
 
     const fetchNovelContent = async () => {
-        const res = await axios.get(`http://localhost:8000/novel/${novelId}/episode`);
+        const res = await axios.get(`/novel/${novelId}/episode`);
         setNovelContent(res.data.episodes);
     };
 
     const fetchEpisode = async (episodeId) => {
-        const res = await axios.get(`http://localhost:8000/novel/paragraph/${episodeId}`);
+        const res = await axios.get(`/novel/paragraph/${episodeId}`);
         setEpisode(res.data);
         setParagraph(res.data.paragraph);
     };
@@ -49,30 +49,30 @@ function Read() {
     }
 
     const fetchComment = async (episodeId) => {
-        await axios.get(`http://localhost:8000/novel/comment/${episodeId}`)
+        await axios.get(`/novel/comment/${episodeId}`)
             .then(res => setComments(res.data.userComment));
     };
 
     const submitComment = async () => {
-        await axios.post(`http://localhost:8000/novel/comment/${episodeId}`, { comment }, { headers: { 'Authorization': `Bearer ${token}` } });
+        await axios.post(`/novel/comment/${episodeId}`, { comment }, { headers: { 'Authorization': `Bearer ${token}` } });
         setComment('');
         fetchComment(episodeId);
     };
 
     const editComment = async (id) => {
-        await axios.patch(`http://localhost:8000/novel/updatecomment/${id}`, { comment: commentEdit }, { headers: { 'Authorization': `Bearer ${token}` } });
+        await axios.patch(`/novel/updatecomment/${id}`, { comment: commentEdit }, { headers: { 'Authorization': `Bearer ${token}` } });
         setComment('');
         fetchComment(episodeId);
         setToggleEditBox(!toggleEditBox);
     };
 
     const deleteComment = async (id) => {
-        await axios.delete(`http://localhost:8000/novel/comment/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        await axios.delete(`/novel/comment/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
         fetchComment(episodeId);
     };
 
     const readRecord = async (episodeId) => {
-        await axios.post(`http://localhost:8000/user/read/${episodeId}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
+        await axios.post(`/user/read/${episodeId}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
     };
 
     useEffect(() => {
@@ -90,13 +90,13 @@ function Read() {
         >
             <Flex
                 direction='column'
-                maxW={{ xl: '1200px' }}
+                maxW='1200px'
                 m='0 auto'
                 bg='#fff'
             >
                 <Navbar />
                 <Box>
-                    <Flex m='50px 0' justify='center'>
+                    <Flex m={['10px 0', '10px 0', '30px 0', '50px 0']} justify='center'>
                         <Text
                             fontSize='2xl'
                             fontWeight='semibold'
@@ -107,7 +107,7 @@ function Read() {
                     {paragraph.map((item, i) => {
                         return (
                             <Box key={i} m='0 90px'>
-                                <Text m='10px 0' textAlign='left' fontSize='lg' fontWeight='light' style={{ textIndent: '50px' }}>{item.paragraph}</Text>
+                                <Text fontSize={['sm', 'sm', 'lg', 'lg']} m='10px 0' textAlign='left' fontWeight='light' style={{ textIndent: '50px' }}>{item.paragraph}</Text>
                             </Box>
                         );
                     })}
@@ -171,7 +171,7 @@ function Read() {
                         <form onSubmit={(e) => { e.preventDefault(); submitComment(); }}>
                             <Flex m='0 100px' w='80%'>
                                 <Textarea
-                                    w='900px'
+                                    w={['300px', '300px', '500px', '900px']}
                                     minH='30px'
                                     overflow='hidden'
                                     placeholder='Write a comment...'

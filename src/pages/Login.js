@@ -2,7 +2,7 @@ import { Box, Flex, Link, Stack, Text, Select, FormControl, FormLabel, FormHelpe
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
-import axios from 'axios';
+import axios from '../config/axios';
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 
@@ -31,7 +31,7 @@ function Login() {
         try {
             e.preventDefault();
             validateInput();
-            const res = await axios.post('http://localhost:8000/user/login', { email, username, password });
+            const res = await axios.post('/user/login', { email, username, password });
             localStorageService.setToken(res.data.token);
             if (cartItem.length !== 0) {
                 return history.push('/checkout');
@@ -164,7 +164,6 @@ function Login() {
                                 No account?{' '}
                                 <Link
                                     color='blue.400'
-                                    href='http://localhost:3000/register'
                                     onClick={() => history.push('/register')}
                                 >
                                     Sign up!

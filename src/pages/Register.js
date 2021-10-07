@@ -1,7 +1,7 @@
 import { Box, Flex, Stack, Textarea, FormControl, FormLabel, FormErrorMessage, Input, Button, Image } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import axios from 'axios';
+import axios from '../config/axios';
 import localStorageService from '../services/localStorageService';
 import defaultProfile from '../components/profile.png';
 
@@ -102,7 +102,7 @@ function Register() {
         formData.append('address', address);
         formData.append('phoneNumber', phoneNumber);
         formData.append('image', file);
-        axios.post('http://localhost:8000/user/register', formData)
+        axios.post('/user/register', formData)
             .then(res => {
                 localStorageService.setToken(res.data.token);
                 history.push('/');

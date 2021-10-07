@@ -2,7 +2,7 @@ import Navbar from '../components/Navbar';
 import { Flex, Box, Text, Button, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, Divider, Stack } from '@chakra-ui/react';
 import { useState, useEffect, useContext, useRef } from 'react';
 import { useHistory } from 'react-router';
-import axios from "axios";
+import axios from "../config/axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 
@@ -20,19 +20,19 @@ function MyNovel() {
     const cancelRef = useRef();
 
     const fetchNovel = async () => {
-        const res = await axios.get('http://localhost:8000/novel/user', { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await axios.get('/novel/user', { headers: { 'Authorization': `Bearer ${token}` } });
         setNovel(res.data.novels);
     };
 
     const fetchRating = async () => {
-        const res = await axios.get('http://localhost:8000/novel/userrating', { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await axios.get('/novel/userrating', { headers: { 'Authorization': `Bearer ${token}` } });
         const operation = res.data.novelRating.map(item => Math.round(item.reduce((acc, cv) => cv.score + acc, 0) / item.length * 100) / 100);
         setRating(operation);
     };
 
     const readCount = async () => {
-        const res = await axios.get('http://localhost:8000/novel/user', { headers: { 'Authorization': `Bearer ${token}` } });
-        const readInfo = await axios.get(`http://localhost:8000/user/allread`);
+        const res = await axios.get('/novel/user', { headers: { 'Authorization': `Bearer ${token}` } });
+        const readInfo = await axios.get(`/user/allread`);
         const counter = res.data.novels.map(item => {
             let sum = 0;
             for (let ele of readInfo.data.novelList) {
@@ -54,7 +54,7 @@ function MyNovel() {
         <Flex
             direction='column'
             align='center'
-            maxW={{ xl: '1200px' }}
+            maxW={'1200px'}
             m='0 auto'
         >
             <Navbar />
@@ -110,7 +110,7 @@ function MyNovel() {
                                     backgroundImage={`url(${item.cover})`}
                                     backgroundSize='cover'
                                     backgroundPosition='center'
-                                    rounded='xl'
+                                    rounded={['sm', 'sm', 'xl', 'xl']}
                                     w='80px'
                                     h='112.5px'
                                     mr='30px'
@@ -132,7 +132,7 @@ function MyNovel() {
                                     </Flex>
                                 </Stack>
                             </Flex>
-                            <Flex w='25%' justify='space-between'>
+                            <Flex w='25%' justify='space-between' display={['block', 'block', 'block', 'flex']}>
                                 <Button
                                     w='87.19px'
                                     size='sm'
@@ -185,7 +185,7 @@ function MyNovel() {
                                                     ml={3}
                                                     onClick={
                                                         async () => {
-                                                            await axios.delete(`http://localhost:8000/novel/${deleteObject.id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                                                            await axios.delete(`/novel/${deleteObject.id}`, { headers: { 'Authorization': `Bearer ${token}` } });
                                                             setIsOpen(false);
                                                             fetchNovel();
                                                         }

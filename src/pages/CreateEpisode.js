@@ -2,7 +2,7 @@ import Navbar from '../components/Navbar';
 import { Box, Flex, Text, Textarea, Input, Button } from '@chakra-ui/react';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
-import axios from "axios";
+import axios from "../config/axios";
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 
@@ -22,7 +22,7 @@ function CreateEpisode() {
 
     useEffect(() => {
         const fetchNovel = async () => {
-            const res = await axios.get(`http://localhost:8000/novel/${novelId}`);
+            const res = await axios.get(`/novel/${novelId}`);
             if (res.data.novel[0].price === 0) {
                 setNovel(true);
             } else {
@@ -30,7 +30,7 @@ function CreateEpisode() {
             }
         };
         const fetchEpisode = async () => {
-            const res = await axios.get(`http://localhost:8000/novel/${novelId}/episode`);
+            const res = await axios.get(`/novel/${novelId}/episode`);
             setEpisode(res.data.episodes);
         };
         fetchNovel();
@@ -40,7 +40,7 @@ function CreateEpisode() {
     let paragraph = content.split(/\r?\n/);
 
     const handleSubmit = (e) => {
-        axios.post(`http://localhost:8000/novel/createcontent/${novelId}`, { episodeNumber, episodeTitle, price, paragraph }, { headers: { 'Authorization': `Bearer ${token}` } })
+        axios.post(`/novel/createcontent/${novelId}`, { episodeNumber, episodeTitle, price, paragraph }, { headers: { 'Authorization': `Bearer ${token}` } })
             .then(res => {
                 history.push('/ninfo');
             })
@@ -72,12 +72,14 @@ function CreateEpisode() {
                 bg='primary.100'
                 justify='space-between'
                 align='center'
+                flexDirection={['column', 'column', 'row', 'row']}
             >
                 <Flex
                     w='80%'
+                    flexDirection={['column', 'column', 'row', 'row']}
                 >
                     <Text
-                        w='21%'
+                        w={['100%', '100%', '31%', '21%']}
                         fontSize='2xl'
                         fontWeight='semibold'
                         color='secondary.600'
@@ -86,7 +88,7 @@ function CreateEpisode() {
                     </Text>
                     <Input
                         p='0'
-                        m='0 5px 0 0'
+                        m={['0 5px 10px 0', '0 5px 10px 0', '0 5px 0 0', '0 5px 0 0']}
                         type='text'
                         placeholder="Episode's name"
                         fontSize='2xl'

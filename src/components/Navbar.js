@@ -1,5 +1,5 @@
 import { Flex, Box, Text, Button, Image, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverFooter, PopoverArrow, Divider, Input } from '@chakra-ui/react';
-import { TriangleDownIcon, DeleteIcon, CloseIcon } from '@chakra-ui/icons';
+import { TriangleDownIcon, DeleteIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router';
 import axios from "axios";
@@ -84,6 +84,7 @@ function Navbar() {
                 >
                     <PopoverTrigger>
                         <Flex
+                            display={['none', 'none', 'flex', 'flex']}
                             h='100%'
                             w='100px'
                             m='0 auto'
@@ -92,7 +93,6 @@ function Navbar() {
                             _hover={{ bg: 'secondary.300' }}
                         >
                             <Text
-                                display='block'
                                 fontWeight='semibold'
                                 color='secondary.600'
                                 cursor='pointer'
@@ -145,7 +145,7 @@ function Navbar() {
                         <Text
                             w='100px'
                             textAlign='center'
-                            display='block'
+                            display={['none', 'none', 'block', 'block']}
                             fontWeight='semibold'
                             color='secondary.600'
                             cursor='pointer'
@@ -157,7 +157,6 @@ function Navbar() {
                 {toggleSearchBox &&
                     <form onSubmit={(e) => { e.preventDefault(); setSearch(searchValue); setSearchValue(''); }}>
                         <Input
-
                             value={searchValue}
                             onChange={e => setSearchValue(e.target.value)}
                         />
@@ -235,10 +234,14 @@ function Navbar() {
                                 align='center'
                                 _hover={{ bg: 'secondary.300' }}>
                                 <Image
+                                    display={['none', 'none', 'block', 'block']}
                                     borderRadius='full'
                                     boxSize='32px'
-                                    src={user.profileImg}
+                                    src={user.profileImg || 'https://static.thenounproject.com/png/3134331-200.png'}
                                     alt="Profile Picture"
+                                />
+                                <HamburgerIcon
+                                    display={['block', 'block', 'none', 'none']}
                                 />
                             </Flex>
                         </PopoverTrigger>

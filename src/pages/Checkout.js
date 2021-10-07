@@ -3,7 +3,7 @@ import { Flex, Box, Input, FormControl, FormLabel, Button, Divider, Text } from 
 import { DeleteIcon } from '@chakra-ui/icons';
 import { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../config/axios';
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 
@@ -22,7 +22,7 @@ function Checkout() {
 
     useEffect(() => {
         const fetchAllEpisode = async (id) => {
-            const res = await axios.get('http://localhost:8000/novel/episode');
+            const res = await axios.get('/novel/episode');
             setEpisode(res.data.episodes);
         };
         fetchAllEpisode();
@@ -39,19 +39,19 @@ function Checkout() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await axios.post('http://localhost:8000/order/', { address, discount }, { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await axios.post('/order/', { address, discount }, { headers: { 'Authorization': `Bearer ${token}` } });
         episode.filter(val => cartItem.includes(val.id)).forEach(async ele => {
             let amount;
             let episodeId = ele.id;
             let novelId = ele.novelId;
             if (ele.novelPrice !== 0) {
                 amount = ele.novelPrice;
-                await axios.post(`http://localhost:8000/order/buynovel/${novelId}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
+                await axios.post(`/order/buynovel/${novelId}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
             } else {
                 amount = ele.price;
-                await axios.post(`http://localhost:8000/order/buyepisode/${episodeId}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
+                await axios.post(`/order/buyepisode/${episodeId}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
             }
-            await axios.post(`http://localhost:8000/order/item/${res.data.order.id}`, { amount, episodeId }, { headers: { 'Authorization': `Bearer ${token}` } });
+            await axios.post(`/order/item/${res.data.order.id}`, { amount, episodeId }, { headers: { 'Authorization': `Bearer ${token}` } });
         });
         setCartItem([]);
         history.push('/');

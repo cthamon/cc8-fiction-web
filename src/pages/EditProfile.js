@@ -3,7 +3,7 @@ import { Box, Flex, Text, Textarea, FormControl, FormLabel, Input, Button, Image
 import { EditIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router';
-import axios from 'axios';
+import axios from '../config/axios';
 import localStorageService from '../services/localStorageService';
 
 function EditProfile() {
@@ -26,7 +26,7 @@ function EditProfile() {
     const descriptionInput = useRef(null);
 
     const fetchUser = async () => {
-        const res = await axios.get('http://localhost:8000/user/me', { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await axios.get('/user/me', { headers: { 'Authorization': `Bearer ${token}` } });
         setUserInfo(res.data.user);
         setDisplayImage(res.data.user.profileImg);
         setInput(prev => ({ ...prev, ['address']: res.data.user.address }));
@@ -42,7 +42,7 @@ function EditProfile() {
         e.preventDefault();
         const { description, address, phoneNumber } = input;
         try {
-            await axios.patch('http://localhost:8000/user/edit', { currentPassword, description, address, phoneNumber }, { headers: { 'Authorization': `Bearer ${token}` } });
+            await axios.patch('/user/edit', { currentPassword, description, address, phoneNumber }, { headers: { 'Authorization': `Bearer ${token}` } });
             setError({ currentPassword: '' });
             fetchUser();
         } catch (err) {
@@ -58,7 +58,7 @@ function EditProfile() {
             m='0 auto'
         >
             <Navbar />
-            <Flex justify='space-between' align='center'>
+            <Flex justify='space-between' align='center' flexDir={['column', 'column', 'row', 'row']}>
                 <FormControl
                     mt='20px'
                     mr='20px'
@@ -92,7 +92,7 @@ function EditProfile() {
                         onChange={async (e) => {
                             const formData = new FormData();
                             formData.append('image', e.target.files[0]);
-                            await axios.patch('http://localhost:8000/user/updatepic', formData, { headers: { 'Authorization': `Bearer ${token}` } });
+                            await axios.patch('/user/updatepic', formData, { headers: { 'Authorization': `Bearer ${token}` } });
                             fetchUser();
                         }}
                     />
@@ -105,7 +105,7 @@ function EditProfile() {
                                 fontSize='2xl'
                                 fontWeight='semibold'
                                 color='green.500'
-                                w='500px'
+                                w={['300px', 'auto', '500px', '500px']}
                             >
                                 {userInfo.username}
                             </Text>
@@ -118,7 +118,7 @@ function EditProfile() {
                                 fontSize='xl'
                                 fontWeight='semibold'
                                 color='secondary.600'
-                                w='500px'
+                                w={['300px', 'auto', '500px', '500px']}
                             >
                                 {userInfo.email}
                             </Text>
@@ -129,7 +129,7 @@ function EditProfile() {
                             <Text fontSize='xx-small' lineHeight='short' fontWeight='semibold'>ADDRESS</Text>
                             <Textarea
                                 ref={addressInput}
-                                w='500px'
+                                w={['300px', 'auto', '500px', '500px']}
                                 value={input.address}
                                 p='10px'
                                 border='none'
@@ -152,7 +152,7 @@ function EditProfile() {
                             <Text fontSize='xx-small' lineHeight='short' fontWeight='semibold'>PHONENUMBER</Text>
                             <Input
                                 ref={phoneInput}
-                                w='500px'
+                                w={['300px', 'auto', '500px', '500px']}
                                 value={input.phoneNumber}
                                 p='10px'
                                 border='none'
@@ -175,7 +175,7 @@ function EditProfile() {
                             <Text fontSize='xx-small' lineHeight='short' fontWeight='semibold'>DESCRIPTION</Text>
                             <Input
                                 ref={descriptionInput}
-                                w='500px'
+                                w={['300px', '300px', '500px', '500px']}
                                 value={input.description}
                                 p='10px'
                                 border='none'

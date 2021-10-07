@@ -2,7 +2,7 @@ import Navbar from '../components/Navbar';
 import { Flex, Box, Text, Table, Thead, Tbody, Tr, Th, Td, Image } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../config/axios';
 import localStorageService from '../services/localStorageService';
 import { ActivityContext } from '../contexts/ActivityContextProvider';
 
@@ -14,7 +14,7 @@ function OrderHistory() {
 
     useEffect(() => {
         const fetchOrderHistory = async () => {
-            const res = await axios.get('http://localhost:8000/order/', { headers: { 'Authorization': `Bearer ${token}` } });
+            const res = await axios.get('/order/', { headers: { 'Authorization': `Bearer ${token}` } });
             setOrderHistory(res.data.orders.sort((a, b) => b.id - a.id));
         };
         fetchOrderHistory();
