@@ -39,15 +39,15 @@ function Navbar() {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const res = await axios.get('http://localhost:8000/user/me', { headers: { 'Authorization': `Bearer ${token}` } });
+            const res = await axios.get('user/me', { headers: { 'Authorization': `Bearer ${token}` } });
             setUser(res.data.user);
         };
         const fetchNovelTypes = async () => {
-            const res = await axios.get('http://localhost:8000/novel/novelTypes');
+            const res = await axios.get('novel/novelTypes');
             setNovelTypes([...new Set(res.data.novelTypes)]);
         };
         const fetchAllEpisode = async (id) => {
-            const res = await axios.get('http://localhost:8000/novel/episode');
+            const res = await axios.get('novel/episode');
             setEpisode(res.data.episodes);
         };
 
